@@ -1,0 +1,52 @@
+﻿@model IEnumerable<ShopDoCu.Models.Order>
+@{
+    ViewData["Title"] = "Đơn hàng của tôi";
+}
+
+<div class="container my-5">
+    <h3 class="mb-4">Lịch sử mua hàng</h3>
+    @if (Model.Any())
+    {
+        <div class="card shadow-sm border-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Mã</th>
+                        <th>Ngày đặt</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>#@item.OrderId</td>
+                            <td>@item.OrderDate?.ToString("dd/MM/yyyy")</td>
+                            <td class="fw-bold text-primary">@item.TotalAmount?.ToString("N0")₫</td>
+                            <td>
+                                @if (item.Status == "Pending")
+                                {
+                                    <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                                }
+                                else
+                                {
+
+                                    <span class="badge bg-secondary">@item.Status</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <a href="/Order/Details/@item.OrderId" class="btn btn-sm btn-outline-primary">Chi tiết</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">Bạn chưa mua đơn hàng nào.</div>
+    }
+</div>

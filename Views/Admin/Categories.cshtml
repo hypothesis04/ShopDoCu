@@ -1,0 +1,74 @@
+@model IEnumerable<ShopDoCu.Models.Category>
+
+@{
+    ViewData["Title"] = "Quản lý danh mục";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold">Quản lý danh mục</h3>
+        <a asp-action="CreateCategory" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i>Thêm danh mục mới
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>Tên danh mục</th>
+                        <th>Danh mục cha</th>
+                        <th>Mô tả</th>
+                        <th class="text-end pe-4">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">@item.CategoryId</td>
+                            <td class="fw-bold text-primary">@item.CategoryName</td>
+                            <td>
+                                @if (item.Parent != null)
+                                {
+                                    <span class="badge bg-secondary">@item.Parent.CategoryName</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">Danh mục gốc</span>
+                                }
+                            </td>
+                            <td>@item.Description</td>
+                            <td class="text-end pe-4">
+                                <a asp-action="EditCategory" asp-route-id="@item.CategoryId" class="btn btn-sm btn-outline-warning me-2">
+                                    <i class="bi bi-pencil"></i> Sửa
+                                </a>
+                                <a asp-action="DeleteCategory" asp-route-id="@item.CategoryId" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
+                                    <i class="bi bi-trash"></i> Xóa
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

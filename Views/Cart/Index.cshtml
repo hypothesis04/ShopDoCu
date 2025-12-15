@@ -1,0 +1,161 @@
+﻿@model IEnumerable<ShopDoCu.Models.Cart>
+@{
+    ViewData["Title"] = "Giỏ hàng";
+    
+    // Tính tổng tiền ban đầu để hiển thị
+    decimal tongTien = 0;
+    if (Model != null && Model.Any())
+    {
+        tongTien = Model.Sum(item => (item.Product?.Price ?? 0) * (item.Quantity ?? 0));
+    }
+}
+
+<div class="container my-4">
+    <h3 class="mb-4 text-primary"><i class="bi bi-cart3 me-2"></i>Giỏ hàng của bạn</h3>
+    
+    @if (Model != null && Model.Any())
+    {
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Ảnh</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Giá</th>
+                            <th>Số lượng</th>
+                            <th>Thành tiền</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            var product = item.Product;
+                            var mainImage = product?.ProductImages?.FirstOrDefault(img => img.IsMain == true) ?? product?.ProductImages?.FirstOrDefault();
+                            var imageUrl = mainImage?.ImageUrl ?? "/images/no-image.jpg";
+                            
+                            decimal gia = product?.Price ?? 0;
+                            int soLuong = item.Quantity ?? 0;
+                            decimal thanhTien = gia * soLuong;
+
+                            <tr>
+                                <td class="ps-4" style="width: 100px">
+                                    <img src="@imageUrl" alt="@product?.ProductName" class="img-thumbnail rounded" style="width: 80px; height: 80px; object-fit: cover;" />
+                                </td>
+                                <td>
+                                    <div class="fw-bold">
+                                        <a href="/Product/Details/@item.ProductId" class="text-decoration-none text-dark">
+                                            @product?.ProductName
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">Kho còn: <span class="fw-bold">@product?.Quantity</span></small>
+                                </td>
+                                <td>@gia.ToString("N0") đ</td>
+                                <td>
+                                    <div class="input-group input-group-sm" style="width: 120px;">
+                                        <input type="number" 
+                                               value="@soLuong" 
+                                               min="1" 
+                                               class="form-control text-center quantity-input" 
+                                               data-product-id="@item.ProductId"
+                                               onchange="updateQuantity(this, @item.ProductId)" />
+                                    </div>
+                                </td>
+                                <td class="fw-bold text-primary" id="item-total-@item.ProductId">
+                                    @thanhTien.ToString("N0") đ
+                                </td>
+                                <td>
+                                    <form asp-action="Remove" method="post" class="d-inline">
+                                        <input type="hidden" name="productId" value="@item.ProductId" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger border-0" onclick="return confirm('Xóa sản phẩm này khỏi giỏ?');" title="Xóa">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot class="bg-light">
+                        <tr>
+                            <td colspan="4" class="text-end fw-bold py-3 fs-5">Tổng cộng:</td>
+                            <td colspan="2" class="fw-bold text-danger py-3 fs-4" id="grand-total">
+                                @tongTien.ToString("N0") đ
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <a href="/" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Tiếp tục mua sắm
+            </a>
+            <a href="/Order/Checkout" class="btn btn-success btn-lg px-5 shadow-sm">
+                Thanh toán <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <div class="mb-3">
+                <i class="bi bi-cart-x text-muted" style="font-size: 4rem;"></i>
+            </div>
+            <h4 class="text-muted">Giỏ hàng của bạn đang trống</h4>
+            <p class="text-muted mb-4">Hãy thêm sản phẩm vào giỏ để tiến hành thanh toán nhé!</p>
+            <a href="/" class="btn btn-primary px-4">Đi mua sắm ngay</a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Hàm cập nhật số lượng qua AJAX
+        function updateQuantity(inputElement, productId) {
+            var newQuantity = $(inputElement).val();
+
+            // 1. Kiểm tra sơ bộ (Client side)
+            if (newQuantity < 1) {
+                alert("Số lượng tối thiểu là 1");
+                $(inputElement).val(1);
+                newQuantity = 1;
+            }
+
+            // 2. Gửi AJAX lên Server
+            $.ajax({
+                url: '/Cart/UpdateCart', // Gọi đến hàm UpdateCart trong CartController
+                type: 'POST',
+                data: { 
+                    productId: productId, 
+                    quantity: newQuantity 
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Cập nhật thành công -> Đổi số tiền trên giao diện
+                        $('#item-total-' + productId).text(response.itemTotal);
+                        $('#grand-total').text(response.cartTotal);
+                        
+                        // Hiệu ứng nháy xanh nhẹ để báo hiệu đã cập nhật
+                        $(inputElement).addClass('bg-success-subtle');
+                        setTimeout(() => $(inputElement).removeClass('bg-success-subtle'), 500);
+                    } else {
+                        // Lỗi (Vượt quá tồn kho)
+                        alert(response.message); // Hiện popup báo lỗi
+                        
+                        if (response.maxQuantity) {
+                            // Tự động sửa lại số lượng về mức max
+                            $(inputElement).val(response.maxQuantity);
+                            // Gọi lại để tính tiền đúng theo số max
+                            updateQuantity(inputElement, productId); 
+                        }
+                    }
+                },
+                error: function () {
+                    alert('Lỗi kết nối đến máy chủ. Vui lòng thử lại sau.');
+                }
+            });
+        }
+    </script>
+}

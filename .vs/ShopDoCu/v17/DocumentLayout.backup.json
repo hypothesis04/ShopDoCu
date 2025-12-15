@@ -1,0 +1,819 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\order\\checkout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\order\\checkout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\order\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\order\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\order\\myorders.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\order\\myorders.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\order\\ordersuccess.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\order\\ordersuccess.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\cart\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\cart\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\controllers\\productcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:controllers\\productcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\models\\producttag.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:models\\producttag.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\models\\productimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:models\\productimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\models\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:models\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\models\\orderdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:models\\orderdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\models\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:models\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\models\\cart.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:models\\cart.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\wwwroot\\css\\admin.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:wwwroot\\css\\admin.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\product\\dangban.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\product\\dangban.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\admin\\userdetails.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\admin\\userdetails.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\admin\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\admin\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\shared\\_adminlayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\shared\\_adminlayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\product\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\product\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\account\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\account\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\account\\profile.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\account\\profile.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\account\\loginviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\account\\loginviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\admin\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\admin\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\shopdocu.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:shopdocu.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Truong\\AppData\\Local\\Temp\\gglept5g..cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\account\\registerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\account\\registerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\shared\\error.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\shared\\error.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\views\\shared\\_validationscriptspartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:views\\shared\\_validationscriptspartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\models\\chobandocucontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:models\\chobandocucontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\models\\review.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:models\\review.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\models\\message.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:models\\message.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\models\\errorviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:models\\errorviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\models\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:models\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\appsettings.production.json.example||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:appsettings.production.json.example||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|c:\\users\\truong\\desktop\\it\\shopdocu\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{008FF2B8-AC7F-4BFD-9597-A5332010ADAF}|ShopDoCu.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 1,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedHeight": 354,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{6324226f-61b6-4f28-92ee-18d4b5fe1e48}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Details.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Order\\Details.cshtml",
+              "RelativeDocumentMoniker": "Views\\Order\\Details.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Order\\Details.cshtml",
+              "RelativeToolTip": "Views\\Order\\Details.cshtml",
+              "ViewState": "AgIAACcAAAAAAAAAAAAIwEMAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-14T14:50:53.39Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MyOrders.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Order\\MyOrders.cshtml",
+              "RelativeDocumentMoniker": "Views\\Order\\MyOrders.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Order\\MyOrders.cshtml",
+              "RelativeToolTip": "Views\\Order\\MyOrders.cshtml",
+              "ViewState": "AgIAABAAAAAAAAAAAAAIwDMAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-14T14:50:37.701Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "OrderSuccess.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Order\\OrderSuccess.cshtml",
+              "RelativeDocumentMoniker": "Views\\Order\\OrderSuccess.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Order\\OrderSuccess.cshtml",
+              "RelativeToolTip": "Views\\Order\\OrderSuccess.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-14T14:49:22.836Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Checkout.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Order\\Checkout.cshtml",
+              "RelativeDocumentMoniker": "Views\\Order\\Checkout.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Order\\Checkout.cshtml",
+              "RelativeToolTip": "Views\\Order\\Checkout.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFwAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-14T14:48:18.481Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "OrderController.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Controllers\\OrderController.cs",
+              "RelativeDocumentMoniker": "Controllers\\OrderController.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Controllers\\OrderController.cs",
+              "RelativeToolTip": "Controllers\\OrderController.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABEAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T14:47:35.761Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Cart\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Cart\\Index.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Cart\\Index.cshtml",
+              "RelativeToolTip": "Views\\Cart\\Index.cshtml",
+              "ViewState": "AgIAAF4AAAAAAAAAAAAIwGYAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-14T12:16:44.965Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "CartController.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Controllers\\CartController.cs",
+              "RelativeDocumentMoniker": "Controllers\\CartController.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Controllers\\CartController.cs",
+              "RelativeToolTip": "Controllers\\CartController.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAwwBAAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T12:16:18.312Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "ProductController.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Controllers\\ProductController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ProductController.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Controllers\\ProductController.cs",
+              "RelativeToolTip": "Controllers\\ProductController.cs",
+              "ViewState": "AgIAAAEBAAAAAAAAAAAIwA0BAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T12:12:46.83Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAKEAAAAAAAAAAAAiwLgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-12T13:40:40.791Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Cart.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\Cart.cs",
+              "RelativeDocumentMoniker": "Models\\Cart.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\Cart.cs",
+              "RelativeToolTip": "Models\\Cart.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T13:36:10.003Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Order.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\Order.cs",
+              "RelativeDocumentMoniker": "Models\\Order.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\Order.cs",
+              "RelativeToolTip": "Models\\Order.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T13:36:23.452Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "OrderDetail.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\OrderDetail.cs",
+              "RelativeDocumentMoniker": "Models\\OrderDetail.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\OrderDetail.cs",
+              "RelativeToolTip": "Models\\OrderDetail.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T13:36:26.176Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Product.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\Product.cs",
+              "RelativeDocumentMoniker": "Models\\Product.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\Product.cs",
+              "RelativeToolTip": "Models\\Product.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T13:36:31.685Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "ProductImage.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\ProductImage.cs",
+              "RelativeDocumentMoniker": "Models\\ProductImage.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\ProductImage.cs",
+              "RelativeToolTip": "Models\\ProductImage.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T13:36:34.51Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AccountController.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Controllers\\AccountController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AccountController.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Controllers\\AccountController.cs",
+              "RelativeToolTip": "Controllers\\AccountController.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAA1wC8AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T13:13:04.827Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "site.css",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\wwwroot\\css\\site.css",
+              "RelativeDocumentMoniker": "wwwroot\\css\\site.css",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\wwwroot\\css\\site.css",
+              "RelativeToolTip": "wwwroot\\css\\site.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-12-13T15:14:43.242Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ProductTag.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\ProductTag.cs",
+              "RelativeDocumentMoniker": "Models\\ProductTag.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\ProductTag.cs",
+              "RelativeToolTip": "Models\\ProductTag.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T13:36:38.54Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "admin.css",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\wwwroot\\css\\admin.css",
+              "RelativeDocumentMoniker": "wwwroot\\css\\admin.css",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\wwwroot\\css\\admin.css",
+              "RelativeToolTip": "wwwroot\\css\\admin.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-12-14T11:23:38.122Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "DangBan.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Product\\DangBan.cshtml",
+              "RelativeDocumentMoniker": "Views\\Product\\DangBan.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Product\\DangBan.cshtml",
+              "RelativeToolTip": "Views\\Product\\DangBan.cshtml",
+              "ViewState": "AgIAAFoAAAAAAAAAAAAAAGIAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-13T15:15:43.641Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "UserDetails.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Admin\\UserDetails.cshtml",
+              "RelativeDocumentMoniker": "Views\\Admin\\UserDetails.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Admin\\UserDetails.cshtml",
+              "RelativeToolTip": "Views\\Admin\\UserDetails.cshtml",
+              "ViewState": "AgIAAEgAAAAAAAAAAAAkwFEAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-14T10:14:42.558Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "Profile.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Account\\Profile.cshtml",
+              "RelativeDocumentMoniker": "Views\\Account\\Profile.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Account\\Profile.cshtml",
+              "RelativeToolTip": "Views\\Account\\Profile.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-13T15:15:35.465Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Home\\Index.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAAGAAAAAAAAAAAAAkwHcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-12T13:34:06.333Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Product\\Create.cshtml",
+              "RelativeDocumentMoniker": "Views\\Product\\Create.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Product\\Create.cshtml",
+              "RelativeToolTip": "Views\\Product\\Create.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-13T15:15:41.665Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Admin\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Admin\\Index.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Admin\\Index.cshtml",
+              "RelativeToolTip": "Views\\Admin\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-12T13:42:26.327Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "_AdminLayout.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Shared\\_AdminLayout.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\_AdminLayout.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Shared\\_AdminLayout.cshtml",
+              "RelativeToolTip": "Views\\Shared\\_AdminLayout.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAABAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-12T13:40:50.898Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "_ViewStart.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Admin\\_ViewStart.cshtml",
+              "RelativeDocumentMoniker": "Views\\Admin\\_ViewStart.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Admin\\_ViewStart.cshtml",
+              "RelativeToolTip": "Views\\Admin\\_ViewStart.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-12T13:42:40.508Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "Login.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Account\\Login.cshtml",
+              "RelativeDocumentMoniker": "Views\\Account\\Login.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Account\\Login.cshtml",
+              "RelativeToolTip": "Views\\Account\\Login.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-12T13:37:17.905Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "Register.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Account\\Register.cshtml",
+              "RelativeDocumentMoniker": "Views\\Account\\Register.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Account\\Register.cshtml",
+              "RelativeToolTip": "Views\\Account\\Register.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-12T13:37:16.901Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "LoginViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Account\\LoginViewModel.cs",
+              "RelativeDocumentMoniker": "Views\\Account\\LoginViewModel.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Account\\LoginViewModel.cs",
+              "RelativeToolTip": "Views\\Account\\LoginViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T13:42:45.99Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "_ViewImports.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\_ViewImports.cshtml",
+              "RelativeDocumentMoniker": "Views\\_ViewImports.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\_ViewImports.cshtml",
+              "RelativeToolTip": "Views\\_ViewImports.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-12T13:35:03.124Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "Properties\\launchSettings.json",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Properties\\launchSettings.json",
+              "RelativeToolTip": "Properties\\launchSettings.json",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAowBsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-12-12T14:16:46.7Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "AdminController.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Controllers\\AdminController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AdminController.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Controllers\\AdminController.cs",
+              "RelativeToolTip": "Controllers\\AdminController.cs",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAYwDQAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T13:13:22.818Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "_ViewStart.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\_ViewStart.cshtml",
+              "RelativeDocumentMoniker": "Views\\_ViewStart.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\_ViewStart.cshtml",
+              "RelativeToolTip": "Views\\_ViewStart.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-12T13:41:03.534Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "RegisterViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Account\\RegisterViewModel.cs",
+              "RelativeDocumentMoniker": "Views\\Account\\RegisterViewModel.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Account\\RegisterViewModel.cs",
+              "RelativeToolTip": "Views\\Account\\RegisterViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T13:42:47.594Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "gglept5g..cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\AppData\\Local\\Temp\\gglept5g..cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\AppData\\Local\\Temp\\gglept5g..cs",
+              "ToolTip": "C:\\Users\\Truong\\AppData\\Local\\Temp\\gglept5g..cs",
+              "RelativeToolTip": "..\\..\\..\\AppData\\Local\\Temp\\gglept5g..cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T14:16:32.455Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "ShopDoCu.csproj",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\ShopDoCu.csproj",
+              "RelativeDocumentMoniker": "ShopDoCu.csproj",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\ShopDoCu.csproj",
+              "RelativeToolTip": "ShopDoCu.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-12-12T14:16:35.549Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "Error.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Shared\\Error.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\Error.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Shared\\Error.cshtml",
+              "RelativeToolTip": "Views\\Shared\\Error.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-12T13:40:53.758Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "_ValidationScriptsPartial.cshtml",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\_ValidationScriptsPartial.cshtml",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
+              "RelativeToolTip": "Views\\Shared\\_ValidationScriptsPartial.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-12T13:40:52.964Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "Review.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\Review.cs",
+              "RelativeDocumentMoniker": "Models\\Review.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\Review.cs",
+              "RelativeToolTip": "Models\\Review.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T13:36:41.478Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\User.cs",
+              "RelativeDocumentMoniker": "Models\\User.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\User.cs",
+              "RelativeToolTip": "Models\\User.cs",
+              "ViewState": "AgIAACcAAAAAAAAAAAAAAAMAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T13:36:43.982Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "Controllers\\HomeController.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "Controllers\\HomeController.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABAAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-20T12:45:58.2Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-20T11:28:49.4Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "Message.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\Message.cs",
+              "RelativeDocumentMoniker": "Models\\Message.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\Message.cs",
+              "RelativeToolTip": "Models\\Message.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T13:36:17.373Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "ChoBanDoCuContext.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\ChoBanDoCuContext.cs",
+              "RelativeDocumentMoniker": "Models\\ChoBanDoCuContext.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\ChoBanDoCuContext.cs",
+              "RelativeToolTip": "Models\\ChoBanDoCuContext.cs",
+              "ViewState": "AgIAAJEAAAAAAAAAAAAqwA4AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T13:34:32.168Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 45,
+              "Title": "Category.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\Category.cs",
+              "RelativeDocumentMoniker": "Models\\Category.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\Category.cs",
+              "RelativeToolTip": "Models\\Category.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T13:36:01.891Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 47,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-10-20T11:28:49.984Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
+              "Title": "ErrorViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\ErrorViewModel.cs",
+              "RelativeDocumentMoniker": "Models\\ErrorViewModel.cs",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\Models\\ErrorViewModel.cs",
+              "RelativeToolTip": "Models\\ErrorViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-12T13:16:35.103Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 46,
+              "Title": "appsettings.Production.json.example",
+              "DocumentMoniker": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\appsettings.Production.json.example",
+              "RelativeDocumentMoniker": "appsettings.Production.json.example",
+              "ToolTip": "C:\\Users\\Truong\\Desktop\\IT\\ShopDoCu\\appsettings.Production.json.example",
+              "RelativeToolTip": "appsettings.Production.json.example",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-12-12T13:20:24.509Z"
+            }
+          ]
+        },
+        {
+          "DockedHeight": 133,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{0ad07096-bba9-4900-a651-0598d26f6d24}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

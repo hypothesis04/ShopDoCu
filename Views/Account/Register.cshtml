@@ -1,0 +1,90 @@
+@using ShopDoCu.Views.Account
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-xl-5">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="text-center mb-4">
+                        <div class="btn btn-light border-0 rounded-circle shadow-sm mb-3" style="width:64px;height:64px;">
+                            <i class="bi bi-stars fs-3 text-primary"></i>
+                        </div>
+                        <h4 class="fw-bold mb-1 text-primary">Tham gia cộng đồng</h4>
+                        <p class="text-muted mb-0">Tạo tài khoản để đăng bán và săn đồ cũ chất lượng</p>
+                    </div>
+
+                    @* Form gửi lên Account/Register (POST) kèm anti-forgery *@
+                    <form id="register-form" asp-action="Register" method="post" class="needs-validation" novalidate>
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label asp-for="UserName" class="form-label"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-primary text-white"><i class="bi bi-person-circle"></i></span>
+                                    <input asp-for="UserName" class="form-control" placeholder="Tên đăng nhập" />
+                                </div>
+                                <span asp-validation-for="UserName" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="FullName" class="form-label"></label>
+                                <input asp-for="FullName" class="form-control" placeholder="Họ và tên" />
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Phone" class="form-label"></label>
+                                <input asp-for="Phone" class="form-control" placeholder="Số điện thoại" />
+                                <span asp-validation-for="Phone" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Address" class="form-label">Địa chỉ <small class="text-muted">(Tùy chọn)</small></label>
+                                <input asp-for="Address" class="form-control" placeholder="Địa chỉ (không bắt buộc)" />
+                                <span asp-validation-for="Address" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Password" class="form-label"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-primary text-white"><i class="bi bi-shield-lock"></i></span>
+                                    <input asp-for="Password" class="form-control" placeholder="Mật khẩu" />
+                                </div>
+                                <span asp-validation-for="Password" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="ConfirmPassword" class="form-label"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-primary text-white"><i class="bi bi-check2-circle"></i></span>
+                                    <input asp-for="ConfirmPassword" class="form-control" placeholder="Nhập lại mật khẩu" />
+                                </div>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">Tạo tài khoản</button>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <span class="text-muted">Đã có tài khoản?</span>
+                            <a href="/Account/Login" class="fw-semibold">Đăng nhập</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

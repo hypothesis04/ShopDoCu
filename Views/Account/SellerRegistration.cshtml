@@ -1,0 +1,103 @@
+@model SellerRegistrationViewModel
+@{
+    // Đặt tiêu đề cho trang
+    ViewData["Title"] = "Đăng ký thành người bán";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-shop me-2"></i>Đăng ký Bán hàng</h4>
+                </div>
+                                 <div class="card-body p-4" id="registration-container">
+                                    
+                                    @if (ViewBag.IsPending == true)
+                                    {
+                                        <div class="text-center my-5">
+                                            <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                                            <h4 class="mt-3 text-success">Đã gửi đăng ký thành công!</h4>
+                                            <p class="lead">Yêu cầu của bạn đang chờ quản trị viên xét duyệt.<br />Vui lòng quay lại sau.</p>
+                                             <a href="/" class="btn btn-primary mt-3">Về Trang chủ</a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-info">
+                                            <i class="bi bi-info-circle me-2"></i>
+                                            <strong>Lưu ý:</strong> Sau khi đăng ký, thông tin của bạn sẽ được gửi lên quản trị viên để duyệt. 
+                                        </div>
+                
+                                        <form id="seller-registration-form" asp-action="SellerRegistration" method="post">
+                                            <div id="form-errors" class="alert alert-danger" style="display: none;"></div>
+                
+                                            @Html.AntiForgeryToken()
+                                            <h5 class="mb-3"><i class="bi bi-person-circle me-2"></i>Thông tin cá nhân</h5>
+                                            <div class="row g-3 mb-4">
+                                                <div class="col-md-6">
+                                                    <label asp-for="FullName" class="form-label"></label>
+                                                    <input asp-for="FullName" class="form-control" />
+                                                    <span asp-validation-for="FullName" class="text-danger small"></span>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label asp-for="Email" class="form-label"></label>
+                                                    <input asp-for="Email" type="email" class="form-control" placeholder="email@example.com" />
+                                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label asp-for="Phone" class="form-label"></label>
+                                                    <input asp-for="Phone" class="form-control" placeholder="0123456789" />
+                                                    <span asp-validation-for="Phone" class="text-danger small"></span>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label asp-for="Address" class="form-label"></label>
+                                                    <input asp-for="Address" class="form-control" placeholder="Địa chỉ đầy đủ" />
+                                                    <span asp-validation-for="Address" class="text-danger small"></span>
+                                                </div>
+                                            </div>
+                                            <h5 class="mb-3"><i class="bi bi-shop me-2"></i>Thông tin cửa hàng</h5>
+                                            <div class="row g-3 mb-4">
+                                                <div class="col-12">
+                                                    <label asp-for="StoreName" class="form-label"></label>
+                                                    <input asp-for="StoreName" class="form-control" placeholder="Tên cửa hàng của bạn" />
+                                                    <span asp-validation-for="StoreName" class="text-danger small"></span>
+                                                </div>
+                                            </div>
+                                            <h5 class="mb-3"><i class="bi bi-credit-card me-2"></i>Thông tin thanh toán</h5>
+                                            <div class="row g-3 mb-4">
+                                                <div class="col-12">
+                                                    <label asp-for="PaymentInfo" class="form-label"></label>
+                                                    <textarea asp-for="PaymentInfo" class="form-control" rows="4" 
+                                                              placeholder="Ví dụ: Ngân hàng: Vietcombank&#10;Số tài khoản: 1234567890&#10;Chủ tài khoản: Nguyễn Văn A"></textarea>
+                                                    <small class="text-muted">Nhập thông tin tài khoản ngân hàng để nhận thanh toán.</small>
+                                                    <span asp-validation-for="PaymentInfo" class="text-danger small d-block"></span>
+                                                </div>
+                                            </div>
+                                            <div class="mb-4">
+                                                <div class="form-check">
+                                                    <input asp-for="AgreeToTerms" class="form-check-input" type="checkbox" id="agreeTerms" />
+                                                    <label class="form-check-label" for="agreeTerms">
+                                                        Tôi đồng ý với <a href="/Home/Policies" target="_blank">các điều khoản và chính sách</a> của website.
+                                                    </label>
+                                                    <span asp-validation-for="AgreeToTerms" class="text-danger small d-block"></span>
+                                                </div>
+                                            </div>
+                                            <div class="d-grid gap-2">
+                                                <button type="submit" class="btn btn-primary btn-lg">
+                                                    <i class="bi bi-check-circle me-2"></i>Gửi đăng ký
+                                                </button>
+                                                <a href="/" class="btn btn-outline-secondary">Hủy</a>
+                                            </div>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                @section Scripts {
+                    <partial name="_ValidationScriptsPartial" />
+                }
+

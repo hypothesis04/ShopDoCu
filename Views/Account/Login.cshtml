@@ -1,0 +1,62 @@
+@using ShopDoCu.Views.Account
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="text-center mb-4">
+                        <div class="btn btn-light border-0 rounded-circle shadow-sm mb-3" style="width:64px;height:64px;">
+                            <i class="bi bi-unlock fs-3 text-primary"></i>
+                        </div>
+                        <h4 class="fw-bold mb-1 text-primary">Chào mừng trở lại</h4>
+                        <p class="text-muted mb-0">Đăng nhập để tiếp tục mua sắm</p>
+                    </div>
+
+                    @* Form gửi lên Account/Login (POST) với anti-forgery *@
+                    <form id="login-form" asp-action="Login" method="post" class="needs-validation" novalidate>
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="ReturnUrl" />
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="UserName" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-primary text-white"><i class="bi bi-person"></i></span>
+                            <input asp-for="UserName" class="form-control" placeholder="Nhập tên đăng nhập" />
+                            </div>
+                            <span asp-validation-for="UserName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-primary text-white"><i class="bi bi-shield-lock"></i></span>
+                            <input asp-for="Password" class="form-control" placeholder="Nhập mật khẩu" />
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Đăng nhập</button>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <span class="text-muted">Chưa có tài khoản?</span>
+                            <a href="/Account/Register" class="fw-semibold">Đăng ký ngay</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

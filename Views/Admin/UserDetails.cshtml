@@ -1,0 +1,102 @@
+@model ShopDoCu.Models.User
+@{
+    ViewData["Title"] = "Chi tiết người dùng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h4 class="mb-0">Chi tiết người dùng: @Model.UserName</h4>
+        </div>
+        <div class="card-body">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+            }
+            @if (TempData["InfoMessage"] != null)
+            {
+                <div class="alert alert-info">@TempData["InfoMessage"]</div>
+            }
+
+            <dl class="row">
+                <dt class="col-sm-3">ID</dt>
+                <dd class="col-sm-9">@Model.UserId</dd>
+
+                <dt class="col-sm-3">Họ tên</dt>
+                <dd class="col-sm-9">@Model.FullName</dd>
+                
+                <dt class="col-sm-3">Email</dt>
+                <dd class="col-sm-9">@Model.Email</dd>
+                
+                <dt class="col-sm-3">Điện thoại</dt>
+                <dd class="col-sm-9">@Model.Phone</dd>
+                
+                <dt class="col-sm-3">Địa chỉ</dt>
+                <dd class="col-sm-9">@Model.Address</dd>
+                
+                <dt class="col-sm-3">Ngày tạo</dt>
+                <dd class="col-sm-9">@Model.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</dd>
+                
+                <dt class="col-sm-3">Vai trò</dt>
+                <dd class="col-sm-9">
+                    @switch (Model.Role)
+                    {
+                        case "SellerPending":
+                            <span class="badge bg-warning text-dark">Chờ duyệt bán hàng</span>
+                            break;
+                        case "Admin":
+                            <span class="badge bg-primary">Quản trị viên</span>
+                            break;
+                        case "Seller":
+                            <span class="badge bg-info">Người bán</span>
+                            break;
+                        default:
+                            <span class="badge bg-secondary">@Model.Role</span>
+                            break;
+                    }
+                </dd>
+
+                <dt class="col-sm-3">Trạng thái tài khoản</dt>
+                    <dd class="col-sm-9">@(Model.IsLocked == true ? "Bị khóa" : "Hoạt động")</dd>
+
+                @if (Model.Role == "Seller" || Model.Role == "SellerPending")
+                {
+                    <dt class="col-sm-3 mt-3"><u>Thông tin cửa hàng</u></dt>
+                    <dd class="col-sm-9 mt-3"></dd>
+
+                    <dt class="col-sm-3">Tên cửa hàng</dt>
+                    <dd class="col-sm-9">@Model.StoreName</dd>
+
+                    <dt class="col-sm-3">Thông tin thanh toán</dt>
+                    <dd class="col-sm-9">@Model.PaymentInfo</dd>
+                }
+            </dl>
+        </div>
+        <div class="card-footer bg-light">
+
+            @if (Model.Role == "SellerPending")
+
+            {
+
+                <form asp-action="ApproveSeller" asp-route-id="@Model.UserId" method="post" class="d-inline">
+
+                    @Html.AntiForgeryToken()
+
+                    <button type="submit" class="btn btn-success"><i class="bi bi-person-check-fill me-2"></i>Duyệt làm người bán</button>
+
+                </form>
+
+                <form asp-action="RejectSeller" asp-route-id="@Model.UserId" method="post" class="d-inline">
+
+                    @Html.AntiForgeryToken()
+
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-person-x-fill me-2"></i>Từ chối</button>
+
+                </form>
+
+            }
+            <a href="@Url.Action("Users", "Admin")" class="btn btn-secondary">Quay lại danh sách</a>
+        </div>
+    </div>
+</div>

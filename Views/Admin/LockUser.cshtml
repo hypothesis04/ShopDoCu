@@ -1,0 +1,21 @@
+@model ShopDoCu.Models.User
+@{
+    ViewData["Title"] = "Khoá tài khoản";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h3 class="mb-4">Khoá tài khoản người dùng</h3>
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">@Model.UserName</h5>
+        <form asp-action="LockUser" method="post">
+            <input type="hidden" name="id" value="@Model.UserId" />
+            <div class="mb-3">
+                <label for="lockReason" class="form-label">Lý do khoá</label>
+                <textarea class="form-control" id="lockReason" name="lockReason" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-warning">Xác nhận khoá</button>
+            <a href="@Url.Action("Users", "Admin")" class="btn btn-secondary ms-2">Huỷ</a>
+        </form>
+    </div>
+</div>

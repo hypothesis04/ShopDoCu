@@ -1,0 +1,99 @@
+@model ShopDoCu.Models.User
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-person-circle me-2"></i>Cập nhật thông tin cá nhân</h4>
+                </div>
+                <div class="card-body p-4">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form asp-action="Profile" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+
+                        <div class="row g-3">
+                            <!-- Avatar -->
+                            <div class="col-12 text-center mb-3">
+                                <label class="form-label fw-bold">Ảnh đại diện</label>
+                                <div class="mb-3">
+                                    @if (!string.IsNullOrEmpty(Model.AvatarUrl))
+                                    {
+                                        <img src="@Model.AvatarUrl" alt="Avatar" class="rounded-circle border border-3 border-primary" 
+                                             style="width: 120px; height: 120px; object-fit: cover;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="rounded-circle border border-3 border-primary d-inline-flex align-items-center justify-content-center bg-primary text-white" 
+                                             style="width: 120px; height: 120px; font-size: 3rem; font-weight: bold;">
+                                            @(!string.IsNullOrEmpty(Model.FullName) ? Model.FullName.Substring(0, 1).ToUpper() : Model.UserName.Substring(0, 1).ToUpper())
+                                        </div>
+                                    }
+                                </div>
+                                <input type="file" name="avatarFile" accept="image/*" class="form-control" />
+                                <small class="text-muted">Chọn ảnh để thay đổi avatar (JPG, PNG, max 2MB)</small>
+                            </div>
+
+                            <!-- Username (readonly) -->
+                            <div class="col-md-6">
+                                <label class="form-label">Tên đăng nhập</label>
+                                <input type="text" class="form-control" value="@Model.UserName" readonly />
+                                <small class="text-muted">Tên đăng nhập không thể thay đổi</small>
+                            </div>
+
+                            <!-- Full Name -->
+                            <div class="col-md-6">
+                                <label asp-for="FullName" class="form-label"></label>
+                                <input asp-for="FullName" class="form-control" />
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="email@example.com" />
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="col-md-6">
+                                <label asp-for="Phone" class="form-label"></label>
+                                <input asp-for="Phone" class="form-control" placeholder="0123456789" />
+                                <span asp-validation-for="Phone" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="col-12">
+                                <label asp-for="Address" class="form-label"></label>
+                                <input asp-for="Address" class="form-control" placeholder="Địa chỉ đầy đủ" />
+                                <span asp-validation-for="Address" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-save me-2"></i>Cập nhật thông tin
+                            </button>
+                            <a href="/" class="btn btn-outline-secondary">Quay lại trang chủ</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

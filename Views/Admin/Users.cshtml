@@ -1,0 +1,97 @@
+@model IEnumerable<ShopDoCu.Models.User>
+
+@{
+    ViewData["Title"] = "Quản lý người dùng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    var pendingList = Model.Where(u => u.Role == "SellerPending").ToList();
+    var activeList = Model.Where(u => u.Role != "SellerPending").ToList();
+}
+
+<h3 class="mb-4 text-primary">Danh sách chờ duyệt (@pendingList.Count)</h3>
+
+@if (pendingList.Any())
+{
+    <div class="row mb-5">
+        @foreach (var u in pendingList)
+        {
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card border-warning shadow-sm h-100">
+                    <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                        <span class="fw-bold">Yêu cầu đăng ký</span>
+                        <span class="badge bg-light text-dark">ID: @u.UserId</span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title text-center mb-3">@u.FullName</h5>
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item"><strong>Username:</strong> @u.UserName</li>
+                            <li class="list-group-item"><strong>SĐT:</strong> @(u.Phone ?? "Chưa cập nhật")</li>
+                            <li class="list-group-item"><strong>Cửa hàng:</strong> @(u.StoreName ?? "Chưa có tên shop")</li>
+                            <li class="list-group-item"><strong>TT:</strong> @(u.PaymentInfo ?? "Chưa có TT")</li>
+                        </ul>
+                        <div class="d-flex justify-content-between">
+                            <form asp-action="ApproveSeller" asp-controller="Admin" asp-route-id="@u.UserId" method="post" class="flex-grow-1 me-2">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="fa fa-check"></i> Duyệt
+                                </button>
+                            </form>
+                            <form asp-action="RejectSeller" asp-controller="Admin" asp-route-id="@u.UserId" method="post" class="flex-grow-1">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Từ chối?');">
+                                    <i class="fa fa-times"></i> Từ chối
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info mb-5">Hiện không có yêu cầu nào chờ duyệt.</div>
+}
+
+<hr />
+
+<h3 class="mb-4">Quản lý người dùng hiện tại</h3>
+<table class="table table-bordered table-hover shadow-sm">
+    <thead class="table-light">
+        <tr>
+            <th>ID</th>
+            <th>Tên đăng nhập</th>
+            <th>Họ tên</th>
+            <th>Email</th>
+            <th>Vai trò</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var u in activeList)
+        {
+            <tr>
+                <td>@u.UserId</td>
+                <td>@u.UserName</td>
+                <td>@u.FullName</td>
+                <td>@u.Email</td>
+                <td>@u.Role</td>
+                <td>@(u.IsLocked == true ? "Đã khoá" : "Hoạt động")</td>
+                <td>
+                    <a href="@Url.Action("UserDetails", "Admin", new { id = u.UserId })" class="btn btn-sm btn-info">Xem</a>
+                    @if (u.IsLocked == true)
+                    {
+                        <a href="@Url.Action("UnlockUser", "Admin", new { id = u.UserId })" class="btn btn-sm btn-success">Mở</a>
+                        <a href="@Url.Action("DeleteUser", "Admin", new { id = u.UserId })" class="btn btn-sm btn-danger" onclick="return confirm('Xoá?');">Xoá</a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("LockUser", "Admin", new { id = u.UserId })" class="btn btn-sm btn-warning">Khoá</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

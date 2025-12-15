@@ -1,0 +1,127 @@
+@model IEnumerable<ShopDoCu.Models.Product>
+@{
+    ViewData["Title"] = "Quản lý sản phẩm";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var pendingList = Model.Where(p => p.Status == "Pending").ToList();
+    var otherList = Model.Where(p => p.Status != "Pending").ToList();
+}
+
+<div class="container-fluid">
+    <h3 class="mb-4 text-primary">Danh sách chờ duyệt (@pendingList.Count)</h3>
+    @if (pendingList.Any())
+    {
+        <div class="card shadow mb-4 border-warning">
+            <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-hourglass-split me-2"></i>Sản phẩm chờ duyệt (@pendingList.Count)</h5>
+                <span class="badge bg-dark">Cần xử lý gấp</span>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Ảnh</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Người bán</th>
+                            <th>Giá</th>
+                            <th>Ngày đăng</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in pendingList)
+                        {
+                            <tr>
+                                <td>@p.ProductId</td> <td class="fw-bold text-primary">@p.ProductName</td>
+                                <td>@p.Seller?.UserName</td>
+                                <td class="text-danger fw-bold">@p.Price.ToString("N0")</td>
+                                <td>@p.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    <a href="@Url.Action("Details", "Admin", new { id = p.ProductId })" class="btn btn-sm btn-info text-white" target="_blank">Xem chi tiết</a>
+                                    
+                                    <a href="@Url.Action("ApproveProduct", "Admin", new { id = p.ProductId })" class="btn btn-sm btn-success fw-bold">
+                                        <i class="bi bi-check-lg"></i> Duyệt
+                                    </a>
+                                    <a href="@Url.Action("RejectProduct", "Admin", new { id = p.ProductId })" class="btn btn-sm btn-outline-danger" onclick="return confirm('Từ chối và xóa bài đăng này?');">
+                                        <i class="bi bi-x-lg"></i> Hủy
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+{
+    <div class="alert alert-info mb-5">Hiện không có yêu cầu nào chờ duyệt.</div>
+}
+
+    <div class="d-flex justify-content-between align-items-center mb-3 mt-5">
+        <h4 class="text-primary border-start border-4 border-primary ps-2">Kho dữ liệu sản phẩm</h4>
+        <div>
+            <span class="badge bg-success">Active: @otherList.Count(x => x.Status == "Active")</span>
+            <span class="badge bg-secondary">Locked: @otherList.Count(x => x.Status == "Locked")</span>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-bordered table-hover mb-0" id="productsTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Người bán</th>
+                        <th>Giá</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày đăng</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in otherList)
+                    {
+                        <tr>
+                            <td>@p.ProductId</td>
+                            <td>
+                                <a href="@Url.Action("Details", "Admin", new { id = p.ProductId })" class="text-decoration-none fw-bold">
+                                    @p.ProductName
+                                </a>
+                            </td>
+                            <td>@p.Seller?.UserName</td>
+                            <td>@p.Price.ToString("N0")</td>
+                            <td>
+
+                                @if(p.Status == "Active" && p.Quantity >0 ) { <span class="badge bg-success">Đang bán</span> }
+                                else 
+                                if(p.Status == "Locked") { <span class="badge bg-secondary">Đã khoá</span> }
+                                else if (p.Quantity ==0 ) { <span class="badge bg-warning text-dark">Hết hàng</span> }
+                                else { <span class="badge bg-light text-dark">@p.Status</span> }
+                            </td>
+                            <td>@(p.CreatedAt?.ToString("dd/MM/yyyy"))</td>
+                            <td>
+                                <a href="@Url.Action("Details", "Admin", new { id = p.ProductId })" class="btn btn-sm btn-info text-white" target="_blank">Xem chi tiết</a>
+                                @if (p.Status == "Active")
+                                {
+                                    <a href="@Url.Action("LockProduct", "Admin", new { id = p.ProductId })" class="btn btn-sm btn-warning">
+                                        <i class="bi bi-lock"></i> Khoá
+                                    </a>
+                                }
+                                @if (p.Status == "Locked")
+                                {
+                                    <a href="@Url.Action("UnlockProduct", "Admin", new { id = p.ProductId })" class="btn btn-sm btn-secondary">
+                                        <i class="bi bi-unlock"></i> Mở
+                                    </a>
+                                }
+                                <a href="@Url.Action("DeleteProduct", "Admin", new { id = p.ProductId })" class="btn btn-sm btn-danger" onclick="return confirm('Xoá vĩnh viễn?');">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

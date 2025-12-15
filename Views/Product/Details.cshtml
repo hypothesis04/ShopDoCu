@@ -1,0 +1,112 @@
+@model ShopDoCu.Models.Product
+
+@{
+    ViewData["Title"] = Model.ProductName;
+    Layout = "~/Views/Shared/_Layout.cshtml"; 
+    
+    var mainImage = Model.ProductImages.FirstOrDefault(i => i.IsMain == true)?.ImageUrl 
+                    ?? Model.ProductImages.FirstOrDefault()?.ImageUrl 
+                    ?? "/images/no-image.png";
+}
+
+<div class="container py-5"> <div class="row">
+        <div class="col-lg-5 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-2">
+                    <div class="main-image-container mb-3 text-center border rounded bg-light" style="height: 400px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        <img id="mainProductImage" src="@mainImage" class="img-fluid" style="max-height: 100%; object-fit: contain;" alt="Ảnh chính">
+                    </div>
+                    @if (Model.ProductImages.Count > 1)
+                    {
+                        <div class="d-flex gap-2 overflow-auto py-2 px-1 custom-scrollbar">
+                            @foreach (var img in Model.ProductImages)
+                            {
+                                <img src="@img.ImageUrl" class="rounded border thumbnail-img" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer; opacity: 0.7;" onclick="changeImage(this.src)">
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h2 class="fw-bold text-dark mb-2">@Model.ProductName</h2>
+                    
+                    <div class="mb-4">
+                        <span class="h3 text-danger fw-bold me-3">@Model.Price.ToString("N0") VNĐ</span>
+                        <span class="badge @(Model.IsNew == true ? "bg-success" : "bg-warning text-dark")">
+                            @(Model.IsNew == true ? "Hàng mới" : "Đồ cũ")
+                        </span>
+                    </div>
+
+                    <p class="text-muted mb-4" style="white-space: pre-line;">
+                        @(Model.Description ?? "Không có mô tả.")
+                    </p>
+
+                    <div class="d-flex align-items-center mb-4 p-3 bg-light rounded">
+                        <img src="@(Model.Seller?.AvatarUrl ?? "/images/default-avatar.png")" class="rounded-circle border me-3" style="width: 50px; height: 50px;">
+                        <div>
+                            <small class="text-muted">Người bán</small>
+                            <h6 class="mb-0 fw-bold">@(Model.Seller?.StoreName ?? Model.Seller?.UserName)</h6>
+                            <small><i class="bi bi-geo-alt-fill text-danger"></i> @(Model.Location ?? "Toàn quốc")</small>
+                        </div>
+                    </div>
+
+                    @if (Model.Status == "Active" && (Model.Quantity > 0))
+                    {
+                        <form asp-action="AddToCart" asp-controller="Product" method="post">
+                            <input type="hidden" name="productId" value="@Model.ProductId" />
+                            
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Số lượng:</label>
+                                    <div class="input-group">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="stepDown()">-</button>
+                                        <input type="number" name="quantity" id="quantityInput" class="form-control text-center" value="1" min="1" max="@Model.Quantity">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="stepUp()">+</button>
+                                    </div>
+                                    <small class="text-muted">Có sẵn: @Model.Quantity</small>
+                                </div>
+                                
+                                <div class="col-md-8">
+                                    <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm">
+                                        <i class="bi bi-cart-plus me-2"></i> Thêm vào giỏ hàng
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger mt-3">
+                            <i class="bi bi-exclamation-circle me-2"></i>
+                            Sản phẩm này hiện đang tạm hết hàng hoặc ngừng kinh doanh.
+                        </div>
+                    }
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function changeImage(src) {
+            document.getElementById('mainProductImage').src = src;
+        }
+
+        // Script tăng giảm số lượng
+        function stepUp() {
+            var input = document.getElementById('quantityInput');
+            var max = parseInt(input.getAttribute('max'));
+            if (parseInt(input.value) < max) input.value = parseInt(input.value) + 1;
+        }
+
+        function stepDown() {
+            var input = document.getElementById('quantityInput');
+            if (parseInt(input.value) > 1) input.value = parseInt(input.value) - 1;
+        }
+    </script>
+}

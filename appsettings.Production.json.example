@@ -1,0 +1,13 @@
+{
+  "ConnectionStrings": {
+    "ChoBanDoCu": "Server=localhost\\SQLEXPRESS;Database=ChoBanDoCu;Integrated Security=True;TrustServerCertificate=True;"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*"
+}
+

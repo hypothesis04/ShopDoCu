@@ -1,0 +1,119 @@
+@model ShopDoCu.Models.Product
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Duyệt sản phẩm";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    
+}
+
+<div class="container-fluid">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h4 class="mb-0">Chi tiết sản phẩm: @Model.ProductName</h4>
+        </div>
+        <div class="card-body">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+            }
+            @if (TempData["InfoMessage"] != null)
+            {
+                <div class="alert alert-info">@TempData["InfoMessage"]</div>
+            }
+
+            <div class="row">
+                <!-- Product Images -->
+                <div class="col-md-6">
+                    <h5>Hình ảnh sản phẩm</h5>
+                    @if (Model.ProductImages != null && Model.ProductImages.Any())
+                    {
+                        var mainImage = Model.ProductImages.FirstOrDefault(img => img.IsMain == true) ?? Model.ProductImages.First();
+                        <div id="main-image-container" class="mb-3">
+                            <img id="main-image" src="@mainImage.ImageUrl" class="img-fluid rounded border" alt="Ảnh chính">
+                        </div>
+                        <div class="d-flex flex-wrap">
+                            @foreach (var image in Model.ProductImages)
+                            {
+                                <div class="p-1">
+                                    <img src="@image.ImageUrl" class="img-thumbnail" style="width: 80px; height: 80px; cursor: pointer;" onclick="document.getElementById('main-image').src='@image.ImageUrl'">
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Sản phẩm này chưa có hình ảnh.</p>
+                    }
+                </div>
+
+                <!-- Product Details -->
+                <div class="col-md-6">
+                    <h5>Thông tin chi tiết</h5>
+                    <dl class="row">
+                        <dt class="col-sm-4">Tên sản phẩm</dt>
+                        <dd class="col-sm-8">@Model.ProductName</dd>
+
+                        <dt class="col-sm-4">Giá</dt>
+                        <dd class="col-sm-8">@Model.Price.ToString("N0") VNĐ</dd>
+
+                        <dt class="col-sm-4">Số lượng</dt>
+                        <dd class="col-sm-8">@Model.Quantity</dd>
+
+                        <dt class="col-sm-4">Tình trạng</dt>
+                        <dd class="col-sm-8">@(Model.IsNew == true ? "Mới" : "Đã qua sử dụng")</dd>
+
+                        <dt class="col-sm-4">Danh mục</dt>
+                        <dd class="col-sm-8">@Model.Category?.CategoryName</dd>
+                        
+                        <dt class="col-sm-4">Người bán</dt>
+                        <dd class="col-sm-8"><a href="@Url.Action("UserDetails", "Admin", new { id = Model.SellerId })">@Model.Seller?.UserName</a></dd>
+
+                        <dt class="col-sm-4">Địa điểm</dt>
+                        <dd class="col-sm-8">@Model.Location</dd>
+                        
+                        <dt class="col-sm-4">Ngày đăng</dt>
+                            <dd class="col-sm-8">@(Model.CreatedAt.HasValue ? Model.CreatedAt.Value.ToLocalTime().ToString("g") : "")</dd>
+
+                        <dt class="col-sm-4">Trạng thái duyệt</dt>
+                        <dd class="col-sm-8">
+                            @switch (Model.Status)
+                            {
+                                case "Active":
+                                    <span class="badge bg-success">Đã duyệt</span>
+                                    break;
+                                case "Pending":
+                                    <span class="badge bg-warning text-dark">Chờ duyệt</span>
+                                    break;
+                                case "Rejected":
+                                    <span class="badge bg-danger">Đã từ chối</span>
+                                    break;
+                                default:
+                                    <span class="badge bg-secondary">@Model.Status</span>
+                                    break;
+                            }
+                        </dd>
+                    </dl>
+
+                    <h5 class="mt-4">Mô tả</h5>
+                    <p>@Model.Description</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-light">
+             @if (Model.Status == "Pending")
+            {
+                <form asp-action="ApproveProduct" asp-route-id="@Model.ProductId" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-success"><i class="bi bi-check-circle me-2"></i>Duyệt sản phẩm</button>
+                </form>
+                <form asp-action="RejectProduct" asp-route-id="@Model.ProductId" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-x-circle me-2"></i>Từ chối</button>
+                </form>
+            }
+            <a href="@Url.Action("Products", "Admin")" class="btn btn-secondary">Quay lại danh sách</a>
+        </div>
+    </div>
+</div>

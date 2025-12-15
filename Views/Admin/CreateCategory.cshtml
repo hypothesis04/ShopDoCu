@@ -1,0 +1,46 @@
+@model ShopDoCu.Models.Category
+
+@{
+    ViewData["Title"] = "Thêm danh mục";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white fw-bold">
+                    Thêm danh mục mới
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateCategory">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Tên danh mục</label>
+                            <input asp-for="CategoryName" class="form-control" required />
+                            <span asp-validation-for="CategoryName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Danh mục cha (Nếu có)</label>
+                            <select asp-for="ParentId" class="form-select" 
+                                    asp-items="@(new SelectList(ViewBag.ParentCategories, "CategoryId", "CategoryName"))">
+                                <option value="">-- Là danh mục gốc --</option>
+                            </select>
+                            <small class="text-muted">Để trống nếu đây là danh mục lớn (VD: Điện thoại, Laptop...)</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Mô tả</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary w-100">Lưu danh mục</button>
+                            <a asp-action="Categories" class="btn btn-secondary w-100">Hủy bỏ</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

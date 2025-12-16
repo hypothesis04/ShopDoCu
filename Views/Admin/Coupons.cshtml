@@ -1,0 +1,84 @@
+@model IEnumerable<ShopDoCu.Models.Coupon>
+@{
+    ViewData["Title"] = "Quản lý mã giảm giá";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid py-4" id="searchResultTable">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-primary">Quản lý Mã giảm giá</h3>
+        
+        <div class="d-flex">
+            <form method="get" action="/Admin/Coupons" class="d-flex me-3">
+                <input type="text" name="searchString" oninput="autoSearch(this)" class="form-control me-2" placeholder="Tìm mã code..." value="@ViewBag.SearchString">
+                <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i></button>
+            </form>
+            <a asp-action="CreateCoupon" class="btn btn-primary text-nowrap">
+                <i class="bi bi-plus-lg me-2"></i>Tạo mã mới
+            </a>
+        </div>
+    </div>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Mã Code</th>
+                        <th>Giảm giá</th>
+                        <th>Loại</th>
+                        <th>Đơn tối thiểu</th>
+                        <th>Số lượng</th>
+                        <th>Thời gian</th>
+                        <th>Trạng thái</th>
+                        <th class="text-end pe-4">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4 fw-bold text-success">@item.Code</td>
+                            <td>@item.DiscountValue.ToString("N0")</td>
+                            <td>
+                                @if(item.DiscountType == "Percent") { <span class="badge bg-info">% Phần trăm</span> }
+                                else { <span class="badge bg-warning text-dark">$ Tiền mặt</span> }
+                            </td>
+                            <td>@item.MinOrderAmount.ToString("N0")₫</td>
+                            <td>@item.Quantity</td>
+                            <td>
+                                <small class="d-block text-muted">Từ: @item.StartDate.ToString("dd/MM/yyyy")</small>
+                                <small class="d-block text-muted">Đến: @item.EndDate.ToString("dd/MM/yyyy")</small>
+                            </td>
+                            <td>
+                                @if (item.IsActive && item.EndDate >= DateTime.Now && item.Quantity > 0)
+                                {
+                                    <span class="badge bg-success">Đang chạy</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Ngừng/Hết hạn</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <a asp-action="EditCoupon" asp-route-id="@item.CouponId" class="btn btn-sm btn-outline-primary me-2">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a asp-action="DeleteCoupon" asp-route-id="@item.CouponId" class="btn btn-sm btn-outline-danger" onclick="return confirm('Xóa mã này?');">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -36,6 +36,14 @@ public class CartController : Controller
         var userId = HttpContext.Session.GetInt32("UserId");
         if (userId == null) return Json(new { success = false, message = "Vui lòng đăng nhập!" });
 
+        var product = await _context.Products.FindAsync(productId);
+        if (product == null) return Json(new { success = false, message = "Sản phẩm không tồn tại!" });
+
+        // --- RÀNG BUỘC: NGƯỜI BÁN KHÔNG ĐƯỢC MUA HÀNG CỦA MÌNH ---
+        if (product.SellerId == userId)
+            {
+                return Json(new { success = false, message = "Bạn không thể tự mua sản phẩm do chính mình đăng bán!" });
+            }
         // Tìm sản phẩm trong giỏ của user này
         // Phải Include Product để lấy số lượng tồn kho (Quantity)
         var cartItem = await _context.Carts

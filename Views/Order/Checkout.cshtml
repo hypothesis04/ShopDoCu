@@ -3,28 +3,37 @@
     ViewData["Title"] = "Thanh toán";
     var cartItems = ViewBag.CartItems as List<ShopDoCu.Models.Cart>;
     var totalAmount = (decimal)ViewBag.TotalAmount;
+    bool isOverLimit = totalAmount > 20000000;
 }
 
 <div class="container my-5">
-    <h3 class="mb-4 fw-bold text-primary">Thanh toán đơn hàng</h3>
+    <div class="d-flex align-items-center mb-4">
+        <h3 class="fw-bold text-primary mb-0"><i class="bi bi-credit-card-2-front me-2"></i>Thanh toán</h3>
+        <span class="mx-3 text-muted">|</span>
+        <span class="text-muted">Hoàn tất đơn hàng của bạn</span>
+    </div>
 
-    <form asp-action="Checkout" method="post">
-        <div class="row">
-            <div class="col-md-7">
+    <form asp-action="Checkout" method="post" id="checkoutForm">
+        <input type="hidden" name="CouponCode" id="hiddenCouponCode" value="" />
+
+        <div class="row g-4">
+            <div class="col-lg-7">
                 <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-header bg-white fw-bold">1. Thông tin người nhận</div>
-                    <div class="card-body">
+                    <div class="card-header bg-white py-3">
+                        <h6 class="mb-0 fw-bold text-uppercase text-primary"><i class="bi bi-geo-alt-fill me-2"></i>1. Thông tin người nhận</h6>
+                    </div>
+                    <div class="card-body p-4">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">Họ tên</label>
+                                <label class="form-label fw-bold small text-muted">Họ và tên</label>
                                 <input type="text" name="receiverName" class="form-control" value="@(Model.FullName ?? Model.UserName)" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Số điện thoại</label>
+                                <label class="form-label fw-bold small text-muted">Số điện thoại</label>
                                 <input type="text" name="receiverPhone" class="form-control" value="@Model.Phone" required>
                             </div>
                             <div class="col-12">
-                                <label class="form-label">Địa chỉ</label>
+                                <label class="form-label fw-bold small text-muted">Địa chỉ nhận hàng</label>
                                 <input type="text" name="shippingAddress" class="form-control" value="@Model.Address" placeholder="Số nhà, đường, phường, quận..." required>
                             </div>
                         </div>
@@ -32,50 +41,91 @@
                 </div>
 
                 <div class="card shadow-sm border-0">
-                    <div class="card-header bg-white fw-bold">2. Hình thức thanh toán</div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <select class="form-select" name="paymentMethod" id="paymentMethod">
-                                <option value="COD">Thanh toán khi nhận hàng (COD)</option>
-                                <option value="Online">Chuyển khoản / Ví điện tử</option>
-                            </select>
+                    <div class="card-header bg-white py-3">
+                        <h6 class="mb-0 fw-bold text-uppercase text-primary"><i class="bi bi-wallet2 me-2"></i>2. Hình thức thanh toán</h6>
+                    </div>
+                    <div class="card-body p-4">
+                        @if (isOverLimit)
+                        {
+                            <div class="alert alert-warning d-flex align-items-center mb-3">
+                                <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+                                <div><strong>Lưu ý:</strong> Đơn hàng > 20 triệu phải thanh toán chuyển khoản.</div>
+                            </div>
+                        }
+
+                        <div class="form-check p-3 border rounded mb-2 @(isOverLimit ? "bg-light text-muted" : "bg-white")">
+                            <input class="form-check-input mt-1" type="radio" name="paymentMethod" id="paymentCOD" value="COD" @(isOverLimit ? "disabled" : "checked")>
+                            <label class="form-check-label w-100 cursor-pointer" for="paymentCOD">
+                                <span class="fw-bold"><i class="bi bi-cash-stack me-2 text-success"></i>COD (Tiền mặt)</span>
+                            </label>
                         </div>
 
-                        <div id="onlineBox" class="alert alert-light border border-primary text-center" style="display:none;">
-                            <h6 class="text-primary fw-bold"><i class="bi bi-qr-code"></i> Quét mã để thanh toán</h6>
-                            <div class="bg-white p-5 border border-2 border-dashed d-inline-block my-2" style="border-style: dashed;">
-                                <span class="text-muted">
-                                    (Chỗ này để ảnh mã QR)<br>
-                                    Đang phát triển...
-                                </span>
-                            </div>
-                            <p class="small text-muted mb-0">Vui lòng chuyển khoản đúng nội dung và chờ xác nhận.</p>
+                        <div class="form-check p-3 border rounded mb-2 bg-white">
+                            <input class="form-check-input mt-1" type="radio" name="paymentMethod" id="paymentOnline" value="Online" @(isOverLimit ? "checked" : "")>
+                            <label class="form-check-label w-100 cursor-pointer" for="paymentOnline">
+                                <span class="fw-bold"><i class="bi bi-bank me-2 text-primary"></i>Chuyển khoản / QR Code</span>
+                            </label>
+                        </div>
+
+                        <div id="onlineBox" class="mt-3 p-4 bg-light rounded text-center border border-primary border-opacity-25" style="display: none;">
+                            <h6 class="fw-bold text-primary">Quét mã để thanh toán</h6>
+                            <i class="bi bi-qr-code-scan" style="font-size: 3rem;"></i>
+                            <div class="mt-2 small text-muted">Nội dung: <strong>[Tên] - [SĐT]</strong></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-5">
-                <div class="card shadow-sm border-0 bg-light">
-                    <div class="card-body">
-                        <h5 class="fw-bold mb-3">Đơn hàng của bạn</h5>
-                        <ul class="list-group list-group-flush mb-3 rounded">
-                            @foreach (var item in cartItems)
-                            {
-                                <li class="list-group-item d-flex justify-content-between bg-white">
-                                    <div>
-                                        <h6 class="my-0 small fw-bold">@item.Product.ProductName</h6>
-                                        <small class="text-muted">x @item.Quantity</small>
-                                    </div>
-                                    <span class="text-muted small">@((item.Product.Price * item.Quantity)?.ToString("N0"))₫</span>
-                                </li>
-                            }
-                            <li class="list-group-item d-flex justify-content-between fw-bold">
-                                <span>Tổng cộng</span>
-                                <span class="text-danger">@totalAmount.ToString("N0")₫</span>
-                            </li>
-                        </ul>
-                        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">ĐẶT HÀNG NGAY</button>
+            <div class="col-lg-5">
+                <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
+                    <div class="card-header bg-white py-3">
+                        <h6 class="mb-0 fw-bold text-uppercase text-primary"><i class="bi bi-bag-check me-2"></i>Đơn hàng</h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="cart-list overflow-auto" style="max-height: 300px;">
+                            <ul class="list-group list-group-flush">
+                                @foreach (var item in cartItems)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center px-4 py-3">
+                                        <div>
+                                            <span class="fw-bold text-dark d-block">@item.Product.ProductName</span>
+                                            <small class="text-muted">x @item.Quantity</small>
+                                        </div>
+                                        <span class="fw-bold">@((item.Product.Price * item.Quantity)?.ToString("N0"))₫</span>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 bg-light border-top">
+                        <label class="form-label fw-bold small text-muted">Mã giảm giá</label>
+                        <div class="input-group mb-2">
+                            <input type="text" id="couponInput" class="form-control" placeholder="Nhập mã voucher...">
+                            <button class="btn btn-dark" type="button" id="btnApplyCoupon">Áp dụng</button>
+                        </div>
+                        <div id="couponMessage" class="small"></div>
+                    </div>
+
+                    <div class="card-footer bg-white p-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Tạm tính</span>
+                            <span class="fw-bold">@totalAmount.ToString("N0")₫</span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mb-2 text-success" id="discountRow" style="display: none;">
+                            <span><i class="bi bi-ticket-perforated-fill me-1"></i>Giảm giá</span>
+                            <span class="fw-bold" id="discountValue">-0₫</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            <span class="h5 fw-bold mb-0">Tổng cộng</span>
+                            <span class="h4 fw-bold text-danger mb-0" id="finalTotal">@totalAmount.ToString("N0")₫</span>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 py-3 mt-3 fw-bold text-uppercase shadow-sm">
+                            Xác nhận đặt hàng
+                        </button>
                     </div>
                 </div>
             </div>
@@ -85,13 +135,61 @@
 
 @section Scripts {
     <script>
-        // Script bật tắt khung Online
-        $('#paymentMethod').change(function() {
-            if ($(this).val() === 'Online') {
-                $('#onlineBox').slideDown();
-            } else {
-                $('#onlineBox').slideUp();
+        $(document).ready(function() {
+            // 1. Logic ẩn hiện QR Code
+            function toggleOnlineBox() {
+                if ($('input[name="paymentMethod"]:checked').val() === 'Online') {
+                    $('#onlineBox').slideDown();
+                } else {
+                    $('#onlineBox').slideUp();
+                }
             }
+            toggleOnlineBox();
+            $('input[name="paymentMethod"]').change(toggleOnlineBox);
+
+            // 2. LOGIC ÁP DỤNG MÃ GIẢM GIÁ (AJAX)
+            $('#btnApplyCoupon').click(function() {
+                var code = $('#couponInput').val().trim();
+                var currentTotal = @totalAmount; // Lấy giá trị từ Razor ra biến JS
+
+                if (!code) {
+                    $('#couponMessage').html('<span class="text-danger">Vui lòng nhập mã!</span>');
+                    return;
+                }
+
+                // Gửi AJAX lên Controller
+                $.ajax({
+                    url: '/Order/CheckCoupon',
+                    type: 'GET',
+                    data: { code: code, totalAmount: currentTotal },
+                    success: function(res) {
+                        if (res.success) {
+                            // Thành công
+                            $('#couponMessage').html('<span class="text-success"><i class="bi bi-check-circle me-1"></i>' + res.message + '</span>');
+                            
+                            // Hiện dòng giảm giá
+                            $('#discountRow').show();
+                            $('#discountValue').text('-' + res.discountText);
+                            
+                            // Cập nhật tổng tiền mới
+                            $('#finalTotal').text(res.newTotal);
+                            
+                            // Gán mã vào input ẩn để gửi đi khi submit
+                            $('#hiddenCouponCode').val(code);
+                            
+                            // Disable nút nhập để tránh sửa đổi lung tung
+                            $('#couponInput').prop('disabled', true);
+                            $('#btnApplyCoupon').prop('disabled', true).text('Đã dùng');
+                        } else {
+                            // Thất bại
+                            $('#couponMessage').html('<span class="text-danger"><i class="bi bi-x-circle me-1"></i>' + res.message + '</span>');
+                        }
+                    },
+                    error: function() {
+                        alert('Lỗi kết nối server!');
+                    }
+                });
+            });
         });
     </script>
 }

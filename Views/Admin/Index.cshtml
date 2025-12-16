@@ -78,6 +78,16 @@
             <a href="/Admin/Orders" class="btn btn-sm btn-light fw-bold text-primary">Xem đơn hàng</a>
         </div>
     }
+     @if (ViewBag.PendingSellers > 0)
+    {
+        <div class="alert alert-primary d-flex align-items-center justify-content-between shadow-sm border-0 mb-3" role="alert">
+            <div>
+                <i class="bi bi-bell-fill me-2"></i>
+                Có <strong>@ViewBag.PendingSellers</strong> người bán mới đang chờ duyệt!
+            </div>
+            <a href="/Admin/Users" class="btn btn-sm btn-light fw-bold text-primary">Xem người bán</a>
+        </div>
+    }
 
     @if (ViewBag.PendingProducts > 0)
     {

@@ -30,9 +30,28 @@
                                 {
                                     <span class="badge bg-warning text-dark">Chờ xác nhận</span>
                                 }
+                                else if (item.Status == "Shipping")
+                                {
+                                    <span class="badge bg-info text-dark">Đang giao hàng</span>
+                                }
+                                else if (item.Status == "Completed")
+                                {
+                                    <span class="badge bg-success">Hoàn thành</span>
+                                }
+                                else if (item.Status == "Cancelled")
+                                {
+                                    <span class="badge bg-danger">Đã hủy</span>
+                                }
+                                else if (item.Status == "ReturnRequested")
+                                {
+                                    <span class="badge bg-primary text-white">Yêu cầu trả hàng</span>
+                                }
+                                else if (item.Status == "Returned")
+                                {
+                                    <span class="badge bg-secondary">Đã trả hàng</span>
+                                }
                                 else
                                 {
-
                                     <span class="badge bg-secondary">@item.Status</span>
                                 }
                             </td>

@@ -5,16 +5,16 @@
 
 @{
     // Lấy thông tin session
-    var isLoggedIn = HttpContextAccessor.HttpContext?.Session.GetString("UserName") != null;
-    var userRole = isLoggedIn ? HttpContextAccessor.HttpContext.Session.GetString("Role") : string.Empty;
-    var userName = isLoggedIn ? HttpContextAccessor.HttpContext.Session.GetString("UserName") : string.Empty;
-    var avatarUrl = isLoggedIn ? HttpContextAccessor.HttpContext.Session.GetString("AvatarUrl") : string.Empty;
+    var isLoggedIn = HttpContextAccessor.HttpContext?.Session?.GetString("UserName") != null;
+    var userRole = isLoggedIn ? HttpContextAccessor.HttpContext?.Session?.GetString("Role") ?? string.Empty : string.Empty;
+    var userName = isLoggedIn ? HttpContextAccessor.HttpContext?.Session?.GetString("UserName") ?? string.Empty : string.Empty;
+    var avatarUrl = isLoggedIn ? HttpContextAccessor.HttpContext?.Session?.GetString("AvatarUrl") ?? string.Empty : string.Empty;
 
     // --- LOGIC TÍNH SỐ LƯỢNG GIỎ HÀNG ---
     int cartCount = 0;
     if (isLoggedIn)
     {
-        var userId = HttpContextAccessor.HttpContext.Session.GetInt32("UserId");
+        var userId = HttpContextAccessor.HttpContext?.Session?.GetInt32("UserId");
         if (userId != null)
         {
             // Tính tổng số lượng item có trong giỏ của user này
@@ -102,7 +102,7 @@
                     {
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" id="userAvatar">
-                                @if (avatarUrl.StartsWith("data:image"))
+                                @if (!string.IsNullOrEmpty(avatarUrl) && avatarUrl.StartsWith("data:image"))
                                 {
                                     <img src="@avatarUrl" alt="Avatar" class="avatar me-2" />
                                 }

@@ -1,0 +1,68 @@
+@model ShopDoCu.Models.Coupon
+@{
+    ViewData["Title"] = "Cập nhật mã giảm giá";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container my-4" style="max-width: 800px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-warning text-dark py-3">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-pencil-square me-2"></i>Cập nhật mã giảm giá</h5>
+        </div>
+        <div class="card-body p-4">
+            <form asp-action="EditCoupon" method="post">
+                <input type="hidden" asp-for="CouponId" />
+                
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Mã Code</label>
+                        <input asp-for="Code" class="form-control text-uppercase" readonly />
+                        <div class="form-text">Không thể thay đổi mã code.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Số lượng còn lại</label>
+                        <input asp-for="Quantity" type="number" class="form-control" min="0" required />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Loại giảm giá</label>
+                        <select asp-for="DiscountType" class="form-select">
+                            <option value="Fixed">Trừ tiền trực tiếp (VNĐ)</option>
+                            <option value="Percent">Trừ theo phần trăm (%)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Giá trị giảm</label>
+                        <input asp-for="DiscountValue" type="number" class="form-control" required />
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Đơn hàng tối thiểu (VNĐ)</label>
+                        <input asp-for="MinOrderAmount" type="number" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Ngày bắt đầu</label>
+                        <input asp-for="StartDate" type="datetime-local" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Ngày kết thúc</label>
+                        <input asp-for="EndDate" type="datetime-local" class="form-control" />
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="IsActive">
+                            <label class="form-check-label fw-bold" for="IsActive">Đang hoạt động</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-end gap-2">
+                    <a asp-action="Coupons" class="btn btn-secondary">Hủy bỏ</a>
+                    <button type="submit" class="btn btn-warning px-4 fw-bold">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

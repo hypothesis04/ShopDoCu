@@ -35,35 +35,44 @@ public class AdminController : Controller
     public async Task<IActionResult> Index()
     {
         if (!IsAdmin()) return RedirectToAction("Index", "Home");
-        var totalUsers = await _context.Users.CountAsync();
+     var totalUsers = await _context.Users.CountAsync();
         var totalProducts = await _context.Products.CountAsync();
         var totalOrders = await _context.Orders.CountAsync();
         var totalCategories = await _context.Categories.CountAsync();
         var pendingProducts = await _context.Products.CountAsync(p => p.Status == "Pending");
         var pendingOrders = await _context.Orders.CountAsync(o => o.Status == "Pending");
-        ViewBag.PendingOrders = pendingOrders;
+        var PendingSellers = await _context.Users.CountAsync(u => u.Role == "SellerPending");
+        ViewBag.TotalUsers = totalUsers;
         ViewBag.TotalProducts = totalProducts;
         ViewBag.TotalOrders = totalOrders;
         ViewBag.TotalCategories = totalCategories;
         ViewBag.PendingProducts = pendingProducts;
+        ViewBag.PendingOrders = pendingOrders;
+        ViewBag.PendingSellers = PendingSellers;
         return View();
     }
 
     // Danh sách sản phẩm
     // Danh sách sản phẩm, có thể lọc theo trạng thái (Active, Pending, Locked...)
     // Admin chỉ có quyền duyệt, xoá, khoá/mở, xem chi tiết sản phẩm
-   public async Task<IActionResult> Products()
+   public async Task<IActionResult> Products(string searchString)
     {
         if (!IsAdmin()) return RedirectToAction("Login", "Account");
 
-        // Lấy tất cả sản phẩm, sắp xếp mới nhất lên đầu để admin dễ thấy bài mới đăng
-        var products = await _context.Products
-            .Include(p => p.Seller) // Kèm thông tin người bán
+        var products = _context.Products
+            .Include(p => p.Seller)
             .Include(p => p.Category)
-            .OrderByDescending(p => p.CreatedAt)
-            .ToListAsync();
+            .AsQueryable();
 
-        return View(products);
+        // LOGIC TÌM KIẾM
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            // Tìm theo tên sản phẩm hoặc tên người bán
+            products = products.Where(p => p.ProductName.Contains(searchString) || p.Seller.UserName.Contains(searchString));
+        }
+
+        ViewBag.SearchString = searchString; // Lưu từ khóa để hiện lại trên View
+        return View(await products.OrderByDescending(p => p.CreatedAt).ToListAsync());
     }
     // Xem chi tiết sản phẩm: thông tin, người bán, danh mục, trạng thái
     // Xem chi tiết sản phẩm
@@ -151,11 +160,20 @@ public class AdminController : Controller
     // Danh sách người dùng
     // Admin có thể khoá/mở, xoá, xem chi tiết, duyệt/từ chối seller
     // Danh sách người dùng
-    public async Task<IActionResult> Users()
+   public async Task<IActionResult> Users(string searchString)
     {
         if (!IsAdmin()) return RedirectToAction("Index", "Home");
-        var users = await _context.Users.ToListAsync();
-        return View(users);
+        
+        var users = _context.Users.AsQueryable();
+
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            // Tìm theo Username, Email hoặc SĐT
+            users = users.Where(u => u.UserName.Contains(searchString) || u.Email.Contains(searchString) || u.Phone.Contains(searchString));
+        }
+
+        ViewBag.SearchString = searchString;
+        return View(await users.ToListAsync());
     }
 
     // Xem chi tiết người dùng: thông tin cá nhân, trạng thái, vai trò, ngày tạo
@@ -327,14 +345,23 @@ public class AdminController : Controller
         return RedirectToAction(nameof(Products));
     }
     // 1. Danh sách đơn hàng
-    public async Task<IActionResult> Orders()
+    public async Task<IActionResult> Orders(string searchString)
     {
-       if (!IsAdmin()) return RedirectToAction("Login", "Account");
-        var orders = await _context.Orders
+        if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+        var orders = _context.Orders
             .Include(o => o.User)
-            .OrderByDescending(o => o.OrderDate)
-            .ToListAsync();
-        return View(orders);
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            // Tìm theo Mã đơn (ID) hoặc Tên người đặt
+            // Lưu ý: search ID cần chuyển đổi số hoặc so sánh chuỗi
+            orders = orders.Where(o => o.OrderId.ToString().Contains(searchString) || o.User.UserName.Contains(searchString));
+        }
+
+        ViewBag.SearchString = searchString;
+        return View(await orders.OrderByDescending(o => o.OrderDate).ToListAsync());
     }
 
     // 2. Xem chi tiết đơn hàng & Xử lý
@@ -347,76 +374,105 @@ public class AdminController : Controller
                 .ThenInclude(od => od.Product)
                 .ThenInclude(p => p.ProductImages)
             .FirstOrDefaultAsync(o => o.OrderId == id);
+        // Đảm bảo không bị null khi truy cập ProductImages
+        if (order?.OrderDetails != null)
+        {
+            foreach (var od in order.OrderDetails)
+            {
+                if (od.Product != null && od.Product.ProductImages == null)
+                {
+                    od.Product.ProductImages = new List<ProductImage>();
+                }
+            }
+        }
 
         if (order == null) return NotFound();
         return View(order);
     }
 
     // 3. Cập nhật trạng thái đơn hàng (Duyệt, Giao, Hủy...)
-   [HttpPost]
+    [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateOrderStatus(int id, string status)
     {
         if (!IsAdmin()) return RedirectToAction("Login", "Account");
-
         // Lấy đơn hàng kèm chi tiết để biết số lượng từng món
         var order = await _context.Orders
-            .Include(o => o.OrderDetails) // Quan trọng: Phải lấy chi tiết đơn hàng
+            .Include(o => o.OrderDetails) 
             .FirstOrDefaultAsync(o => o.OrderId == id);
 
         if (order != null)
         {
-            // Kiểm tra nếu đơn hàng đang ở trạng thái hủy rồi thì không làm gì cả (tránh hoàn kho 2 lần)
-            if (order.Status == "Cancelled")
+            // Check 1: Nếu đơn đã xong/hủy rồi thì không cho sửa lung tung nữa
+            if (order.Status == "Cancelled" || order.Status == "Returned")
             {
-                TempData["ErrorMessage"] = "Đơn hàng này đã bị hủy trước đó!";
+                TempData["ErrorMessage"] = "Đơn hàng này đã kết thúc quy trình, không thể thay đổi trạng thái!";
                 return RedirectToAction("OrderDetails", new { id = id });
             }
 
-            // --- LOGIC HOÀN KHO KHI HỦY ĐƠN ---
-            if (status == "Cancelled")
+            // --- LOGIC 1: HỦY ĐƠN HOẶC CHẤP NHẬN TRẢ HÀNG (HOÀN KHO) ---
+            // Nếu Admin chọn "Cancelled" (Hủy) hoặc "Returned" (Đã nhận hàng trả)
+            if (status == "Cancelled" || status == "Returned")
             {
                 foreach (var item in order.OrderDetails)
                 {
-                    // Tìm sản phẩm trong kho
                     var product = await _context.Products.FindAsync(item.ProductId);
                     if (product != null)
                     {
-                        // Cộng lại số lượng đã bán vào kho
-                        product.Quantity += item.Quantity;
+                        product.Quantity += item.Quantity; // CỘNG LẠI KHO
                     }
                 }
-                // Lưu thay đổi số lượng kho
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = $"Đã hủy đơn hàng #{id} và hoàn lại kho thành công!";
+
+                if (status == "Returned")
+                {
+                    // Nếu trả hàng thành công -> Cập nhật trạng thái tiền là "Đã hoàn tiền"
+                    order.PaymentStatus = "Refunded";
+                    TempData["SuccessMessage"] = $"Đã xác nhận trả hàng đơn #{id}. Kho đã được cập nhật!";
+                }
+                else 
+                {
+                    TempData["SuccessMessage"] = $"Đã hủy đơn hàng #{id} và hoàn lại kho thành công!";
+                }
             }
+            // --- LOGIC 2: ĐANG GIAO HÀNG ---
             else if (status == "Shipping")
             {
                 TempData["SuccessMessage"] = $"Đơn hàng #{id} đang được giao!";
             }
+            // --- LOGIC 3: TỪ CHỐI TRẢ HÀNG (QUAY VỀ COMPLETED) ---
+            else if (status == "ReturnRejected")
+            {
+                // Nếu từ chối, ta đẩy trạng thái về lại Completed (Hoàn thành) như cũ
+                status = "Completed"; 
+                TempData["ErrorMessage"] = "Đã từ chối yêu cầu trả hàng.";
+            }
             
-            // Cập nhật trạng thái
+            // Lưu xuống DB
             order.Status = status;
             await _context.SaveChangesAsync();
         }
 
         return RedirectToAction("OrderDetails", new { id = id });
+       
     }
    // --- QUẢN LÝ DANH MỤC (CATEGORY) ---
 
     // 1. Danh sách danh mục
-    public async Task<IActionResult> Categories()
+    public async Task<IActionResult> Categories(string searchString)
     {
         if (!IsAdmin()) return RedirectToAction("Login", "Account");
 
-        // Lấy danh sách danh mục, include Parent để hiện tên danh mục cha
-        var categories = await _context.Categories
-            .Include(c => c.Parent) // Tự trỏ đến chính bảng Category
-            .OrderBy(c => c.ParentId) // Gom nhóm cha lên trước
-            .ThenBy(c => c.CategoryId)
-            .ToListAsync();
+        var categories = _context.Categories
+            .Include(c => c.Parent)
+            .AsQueryable();
 
-        return View(categories);
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            categories = categories.Where(c => c.CategoryName.Contains(searchString));
+        }
+
+        ViewBag.SearchString = searchString;
+        return View(await categories.OrderBy(c => c.ParentId).ThenBy(c => c.CategoryId).ToListAsync());
     }
 
     // 2. Tạo danh mục mới (GET)
@@ -529,6 +585,91 @@ public class AdminController : Controller
         TempData["SuccessMessage"] = "Đã xóa danh mục!";
         
         return RedirectToAction(nameof(Categories));
+    }
+    // Danh sách Coupon (Có tìm kiếm)
+    public async Task<IActionResult> Coupons(string searchString)
+    {
+        if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+        var coupons = _context.Coupons.AsQueryable();
+
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            coupons = coupons.Where(c => c.Code.Contains(searchString));
+        }
+
+        ViewBag.SearchString = searchString;
+        return View(await coupons.OrderByDescending(c => c.CouponId).ToListAsync());
+    }
+    public IActionResult CreateCoupon()
+    {
+        if (!IsAdmin()) return RedirectToAction("Login", "Account");
+        return View();
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateCoupon(Coupon coupon)
+    {
+        if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+        // Kiểm tra trùng mã
+        if (await _context.Coupons.AnyAsync(c => c.Code == coupon.Code))
+        {
+            ModelState.AddModelError("Code", "Mã giảm giá này đã tồn tại!");
+            return View(coupon);
+        }
+
+        if (ModelState.IsValid)
+        {
+            _context.Coupons.Add(coupon);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Tạo mã giảm giá thành công!";
+            return RedirectToAction(nameof(Coupons));
+        }
+        return View(coupon);
+    }
+    public async Task<IActionResult> EditCoupon(int id)
+    {
+        if (!IsAdmin()) return RedirectToAction("Login", "Account");
+        var coupon = await _context.Coupons.FindAsync(id);
+        if (coupon == null) return NotFound();
+        return View(coupon);
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditCoupon(int id, Coupon coupon)
+    {
+        if (!IsAdmin()) return RedirectToAction("Login", "Account");
+        if (id != coupon.CouponId) return NotFound();
+
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                _context.Update(coupon);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Cập nhật mã giảm giá thành công!";
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Coupons.Any(e => e.CouponId == id)) return NotFound();
+                else throw;
+            }
+            return RedirectToAction(nameof(Coupons));
+        }
+        return View(coupon);
+    }
+    public async Task<IActionResult> DeleteCoupon(int id)
+    {
+        if (!IsAdmin()) return RedirectToAction("Login", "Account");
+        var coupon = await _context.Coupons.FindAsync(id);
+        if (coupon != null)
+        {
+            _context.Coupons.Remove(coupon);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Đã xóa mã giảm giá!";
+        }
+        return RedirectToAction(nameof(Coupons));
     }
 }
 

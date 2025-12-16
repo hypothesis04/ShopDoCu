@@ -97,43 +97,74 @@
                     <hr>
                     
                     <div class="d-grid gap-2">
-                        @if (Model.Status == "Pending")
-                        {
-                            <form asp-action="UpdateOrderStatus" method="post">
-                                <input type="hidden" name="id" value="@Model.OrderId" />
-                                <button type="submit" name="status" value="Shipping" class="btn btn-primary w-100 mb-2">
-                                    <i class="bi bi-truck me-2"></i>Xác nhận & Giao hàng
-                                </button>
-                                <button type="submit" name="status" value="Cancelled" class="btn btn-outline-danger w-100" onclick="return confirm('Bạn chắc chắn muốn hủy đơn này?');">
-                                    <i class="bi bi-x-circle me-2"></i>Hủy đơn hàng
-                                </button>
-                            </form>
-                        }
-                        else if (Model.Status == "Shipping")
-                        {
-                            <div class="alert alert-info text-center mb-0">
-                                <i class="bi bi-hourglass-split me-1"></i> Đang chờ khách nhận hàng...
-                            </div>
-                             <form asp-action="UpdateOrderStatus" method="post" class="mt-2">
-                                <input type="hidden" name="id" value="@Model.OrderId" />
-                                <button type="submit" name="status" value="Cancelled" class="btn btn-outline-danger w-100 btn-sm" onclick="return confirm('Giao thất bại/Hủy đơn?');">
-                                    Hủy đơn hàng
-                                </button>
-                            </form>
-                        }
-                        else if (Model.Status == "Completed")
-                        {
-                            <div class="alert alert-success text-center mb-0">
-                                <i class="bi bi-check-all me-1"></i> Khách đã nhận hàng
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="alert alert-secondary text-center mb-0">
-                                Đơn hàng đã đóng
-                            </div>
-                        }
-                    </div>
+                            @if (Model.Status == "Pending")
+                            {
+                                <form asp-action="UpdateOrderStatus" method="post">
+                                    <input type="hidden" name="id" value="@Model.OrderId" />
+                                    <button type="submit" name="status" value="Shipping" class="btn btn-primary w-100 mb-2">
+                                        <i class="bi bi-truck me-2"></i>Xác nhận & Giao hàng
+                                    </button>
+                                    <button type="submit" name="status" value="Cancelled" class="btn btn-outline-danger w-100" onclick="return confirm('Bạn chắc chắn muốn hủy đơn này?');">
+                                        <i class="bi bi-x-circle me-2"></i>Hủy đơn hàng
+                                    </button>
+                                </form>
+                            }
+                            
+                            @* --- THÊM ĐOẠN NÀY: XỬ LÝ YÊU CẦU TRẢ HÀNG --- *@
+                            else if (Model.Status == "ReturnRequested")
+                                {
+                                    <div class="alert alert-warning text-center">
+                                        <i class="bi bi-exclamation-triangle-fill fs-1 d-block mb-2"></i>
+                                        <strong>Khách yêu cầu trả hàng!</strong>
+                                        
+                                        <p class="small mt-1 text-muted">Vui lòng kiểm tra kỹ trước khi đồng ý.</p>
+                                    </div>
+
+                                    <form asp-action="UpdateOrderStatus" method="post">
+                                        <input type="hidden" name="id" value="@Model.OrderId" />
+                                        
+                                        <button type="submit" name="status" value="Returned" class="btn btn-success w-100 mb-2" onclick="return confirm('Xác nhận nhận lại hàng và hoàn tiền cho khách? Kho sẽ được cộng lại.');">
+                                            <i class="bi bi-arrow-return-left me-2"></i>Đồng ý Trả hàng
+                                        </button>
+                                        
+                                        <button type="submit" name="status" value="ReturnRejected" class="btn btn-outline-danger w-100" onclick="return confirm('Từ chối yêu cầu này? Đơn hàng sẽ quay lại trạng thái Hoàn thành.');">
+                                            <i class="bi bi-x-lg me-2"></i>Từ chối yêu cầu
+                                        </button>
+                                    </form>
+                                }
+                            @* --------------------------------------------- *@
+
+                            else if (Model.Status == "Shipping")
+                            {
+                                <div class="alert alert-info text-center mb-0">
+                                    <i class="bi bi-hourglass-split me-1"></i> Đang chờ khách nhận hàng...
+                                </div>
+                                <form asp-action="UpdateOrderStatus" method="post" class="mt-2">
+                                    <input type="hidden" name="id" value="@Model.OrderId" />
+                                    <button type="submit" name="status" value="Cancelled" class="btn btn-outline-danger w-100 btn-sm" onclick="return confirm('Giao thất bại/Hủy đơn?');">
+                                        Hủy đơn hàng
+                                    </button>
+                                </form>
+                            }
+                            else if (Model.Status == "Completed")
+                            {
+                                <div class="alert alert-success text-center mb-0">
+                                    <i class="bi bi-check-all me-1"></i> Đơn hàng hoàn tất
+                                </div>
+                            }
+                            else if (Model.Status == "Returned")
+                            {
+                                <div class="alert alert-primary text-center mb-0">
+                                    <i class="bi bi-arrow-counterclockwise me-1"></i> Đã trả hàng & Hoàn tiền
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-secondary text-center mb-0">
+                                    Đơn hàng đã hủy
+                                </div>
+                            }
+                        </div>
                 </div>
             </div>
         </div>

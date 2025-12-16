@@ -20,6 +20,64 @@ public class ProductController : Controller
         _context = context;
         _environment = environment;
     }
+    [HttpGet]
+    public async Task<IActionResult> Index(string q, int? categoryId, decimal? minPrice, decimal? maxPrice)
+    {
+        // 1. Khởi tạo query
+        var productsQuery = _context.Products
+            .Include(p => p.ProductImages)
+            .Include(p => p.Category)
+            .Where(p => p.Status == "Active");
+
+        // 2. TÌM KIẾM
+        if (!string.IsNullOrWhiteSpace(q))
+        {
+            productsQuery = productsQuery.Where(p => (p.ProductName ?? "").Contains(q) || (p.Description ?? "").Contains(q));
+        }
+
+        // 3. DANH MỤC
+        if (categoryId.HasValue)
+        {
+            var childCategoryIds = await _context.Categories
+                .Where(c => c.ParentId == categoryId)
+                .Select(c => c.CategoryId)
+                .ToListAsync();
+            childCategoryIds.Add(categoryId.Value);
+
+            productsQuery = productsQuery.Where(p => p.CategoryId.HasValue && childCategoryIds.Contains(p.CategoryId.Value));
+        }
+
+        // 4. LỌC GIÁ
+        if (minPrice.HasValue)
+        {
+            productsQuery = productsQuery.Where(p => p.Price >= minPrice.Value);
+        }
+        if (maxPrice.HasValue)
+        {
+            productsQuery = productsQuery.Where(p => p.Price <= maxPrice.Value);
+        }
+
+        // 5. Menu danh mục bên trái
+        var categories = await _context.Categories
+            .Include(c => c.InverseParent)
+            .Where(c => c.ParentId == null)
+            .OrderBy(c => c.CategoryName)
+            .ToListAsync();
+
+        // 6. ViewBag
+        ViewBag.Categories = categories;
+        ViewBag.SelectedCategoryId = categoryId;
+        ViewBag.SearchQuery = q;
+        ViewBag.MinPrice = minPrice;
+        ViewBag.MaxPrice = maxPrice;
+
+        // 7. Thực thi
+        var result = await productsQuery
+            .OrderByDescending(p => p.CreatedAt)
+            .ToListAsync();
+
+        return View("Index", result);
+    }
 
    [HttpGet]
     public async Task<IActionResult> Create(bool success = false)
@@ -49,7 +107,7 @@ public class ProductController : Controller
     // 2. HÀM XỬ LÝ LƯU (POST: /Product/Create)
     // ==========================================
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [ValidateAntiForgeryToken] 
     public async Task<IActionResult> Create(ProductCreateViewModel model)
     {
         var userId = HttpContext.Session.GetInt32("UserId");
@@ -57,8 +115,10 @@ public class ProductController : Controller
 
         if (userId == null || role != "Seller") return RedirectToAction("Login", "Account");
 
-        // Validate ảnh thủ công
+        // Lấy file ảnh
         var imageFiles = Request.Form.Files.Where(f => f.Name == "ProductImages").ToList();
+
+        // Validate ảnh thủ công
         if (imageFiles == null || imageFiles.Count < 3)
         {
             ModelState.AddModelError("ProductImages", "Vui lòng chọn ít nhất 3 ảnh sản phẩm");
@@ -105,51 +165,58 @@ public class ProductController : Controller
                     Views = 0
                 };
                 _context.Products.Add(product);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(); // Lưu để lấy ProductId
 
                 // 2. Lưu Ảnh
+                // Lưu ý: Cần inject IWebHostEnvironment _environment vào Constructor của Controller
                 var uploadsFolder = Path.Combine(_environment.WebRootPath, "images", "products");
                 if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
 
-                for (int i = 0; i < imageFiles.Count; i++)
+                if (imageFiles != null)
                 {
-                    var file = imageFiles[i];
-                    if (file.Length > 0)
+                    for (int i = 0; i < imageFiles.Count; i++)
                     {
-                        var fileName = $"{product.ProductId}_{i}_{DateTime.UtcNow.Ticks}{Path.GetExtension(file.FileName)}";
-                        var filePath = Path.Combine(uploadsFolder, fileName);
-
-                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        var file = imageFiles[i];
+                        if (file.Length > 0)
                         {
-                            await file.CopyToAsync(stream);
-                        }
-                        savedFilePaths.Add(filePath); // Lưu đường dẫn để rollback nếu lỗi
+                            var fileName = $"{product.ProductId}_{i}_{DateTime.UtcNow.Ticks}{Path.GetExtension(file.FileName)}";
+                            var filePath = Path.Combine(uploadsFolder, fileName);
 
-                        var pImage = new ProductImage
-                        {
-                            ProductId = product.ProductId,
-                            ImageUrl = $"/images/products/{fileName}",
-                            IsMain = (i == model.MainImageIndex)
-                        };
-                        _context.ProductImages.Add(pImage);
-                    }
-                }
-                await _context.SaveChangesAsync();
+                            using (var stream = new FileStream(filePath, FileMode.Create))
+                            {
+                                await file.CopyToAsync(stream);
+                            }
+                            savedFilePaths.Add(filePath); // Lưu đường dẫn để rollback nếu lỗi
+
+                            var pImage = new ProductImage
+                            {
+                                ProductId = product.ProductId,
+                                ImageUrl = $"/images/products/{fileName}",
+                                IsMain = (i == model.MainImageIndex)
+                            };
+                            _context.ProductImages.Add(pImage);
+                        } 
+                    } // Đóng vòng For
+                } // Đóng IF imageFiles != null 
+
+                await _context.SaveChangesAsync(); // Lưu ProductImages vào DB
 
                 // 3. Commit
                 await transaction.CommitAsync();
 
-                // --- QUAN TRỌNG: Redirect về chính nó kèm success=true ---
                 return RedirectToAction("Create", new { success = true });
             }
             catch (Exception)
             {
+                // Rollback transaction (tự động khi dispose, nhưng gọi explicit cũng được)
                 await transaction.RollbackAsync();
+
+                // Xóa ảnh đã lỡ upload nếu lỗi DB
                 foreach (var path in savedFilePaths)
                 {
                     if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
                 }
-                throw;
+                throw; // Ném lỗi ra để hiển thị trang lỗi hoặc log
             }
         }
     }
@@ -185,7 +252,6 @@ public class ProductController : Controller
 
     // 2. Action Thêm vào giỏ hàng (Xử lý khi bấm nút Mua)
     [HttpPost]
-    [HttpPost]
     public async Task<IActionResult> AddToCart(int productId, int quantity)
     {
         // 1. Kiểm tra đăng nhập
@@ -194,6 +260,14 @@ public class ProductController : Controller
         {
             // Lưu URL hiện tại để login xong quay lại đúng trang chi tiết sản phẩm
             return RedirectToAction("Login", "Account", new { returnUrl = $"/Product/Details/{productId}" });
+        }
+        var product = await _context.Products.FindAsync(productId);
+    
+        if (product != null && product.SellerId == userId)
+        {
+            // Nếu người mua trùng với người bán -> Báo lỗi và đuổi về
+            TempData["ErrorMessage"] = "Bạn không thể tự mua sản phẩm của chính mình!";
+            return RedirectToAction("Details", "Product", new { id = productId });
         }
 
         // 2. Kiểm tra xem sản phẩm đã có trong giỏ của user này chưa
@@ -224,77 +298,116 @@ public class ProductController : Controller
         // Chuyển hướng đến trang Giỏ hàng để người dùng xem luôn
         return RedirectToAction("Index", "Cart");
     }
-     // Trang danh sách sản phẩm, lọc theo danh mục nếu có
-  [HttpGet]
-    public async Task<IActionResult> Index(int? categoryId)
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
     {
-        // 1. Khởi tạo query cơ bản
-        var productsQuery = _context.Products
-            .Include(p => p.ProductImages)
-            .Include(p => p.Category)
-            .Where(p => p.Status == "Active");
+        var userId = HttpContext.Session.GetInt32("UserId");
+        if (userId == null) return RedirectToAction("Login", "Account");
 
-        // 2. Xử lý lọc theo danh mục
-        if (categoryId.HasValue)
+        var product = await _context.Products
+                         .Include(p => p.ProductImages) 
+                         .FirstOrDefaultAsync(p => p.ProductId == id);
+
+        if (product == null) return NotFound();
+
+        // BẢO MẬT: Chỉ chủ sở hữu mới được sửa
+        if (product.SellerId != userId)
         {
-            // Tìm tất cả các danh mục con của danh mục đang chọn
-            // Ví dụ: Chọn "Điện thoại" (ID 1) thì sẽ tìm ra [20, 21, 22, 23...] (iPhone, Samsung...)
-            var childCategoryIds = await _context.Categories
-                .Where(c => c.ParentId == categoryId)
-                .Select(c => c.CategoryId)
-                .ToListAsync();
-
-            // Thêm chính ID đang chọn vào danh sách (để lỡ sản phẩm gán trực tiếp vào cha vẫn hiện)
-            childCategoryIds.Add(categoryId.Value);
-
-            // Lọc sản phẩm có CategoryId nằm trong danh sách này
-            productsQuery = productsQuery.Where(p => p.CategoryId.HasValue && childCategoryIds.Contains(p.CategoryId.Value));
+            return RedirectToAction("Index", "Home"); // Hoặc trang báo lỗi 403
         }
 
-        // 3. Lấy danh sách danh mục cha để hiển thị lên Menu
-        var categories = await _context.Categories
-            .Include(c => c.InverseParent) // <--- QUAN TRỌNG: Lấy kèm con để hiển thị
-            .Where(c => c.ParentId == null)
-            .OrderBy(c => c.CategoryName)
-            .ToListAsync();
+        // Load danh mục để đổ vào dropdown
+        ViewBag.ParentCategories = new SelectList(await _context.Categories.Where(c => c.ParentId == null).ToListAsync(), "CategoryId", "CategoryName");
+        
+        // Nếu sản phẩm đang có danh mục con, load danh mục con tương ứng
+        if (product.CategoryId != null)
+        {
+            var currentCategory = await _context.Categories.FindAsync(product.CategoryId);
+            if (currentCategory != null && currentCategory.ParentId != null)
+            {
+                // Nếu category hiện tại là con, thì load list anh em của nó
+                ViewBag.ChildCategories = new SelectList(await _context.Categories.Where(c => c.ParentId == currentCategory.ParentId).ToListAsync(), "CategoryId", "CategoryName", product.CategoryId);
+                // Set lại ParentId cho View để nó chọn đúng cha
+                ViewBag.SelectedParentId = currentCategory.ParentId;
+            }
+        }
 
-        ViewBag.Categories = categories;
-        ViewBag.SelectedCategoryId = categoryId;
-
-        // 4. Thực thi query và trả về View
-        var result = await productsQuery
-            .OrderByDescending(p => p.CreatedAt)
-            .ToListAsync();
-
-        return View(result);
+        return View(product);
     }
-    // Tìm kiếm sản phẩm
-[HttpGet]
-public async Task<IActionResult> TimKiem(string q)
-{
-    // 1. Tìm kiếm sản phẩm
-    var products = _context.Products
-        .Include(p => p.ProductImages)
-        .Include(p => p.Category)
-        .Where(p => p.Status == "Active");
 
-    if (!string.IsNullOrWhiteSpace(q))
+    // 2. POST: Xử lý lưu thay đổi
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, Product model, IFormFile[]? newImages)
     {
-        products = products.Where(p => p.ProductName.Contains(q) || p.Description.Contains(q));
+        var userId = HttpContext.Session.GetInt32("UserId");
+        if (userId == null) return RedirectToAction("Login", "Account");
+
+        if (id != model.ProductId) return NotFound();
+
+        // Load sản phẩm gốc từ DB để cập nhật (không dùng model trực tiếp để tránh hack field khác)
+        var productInDb = await _context.Products
+                                .Include(p => p.ProductImages)
+                                .FirstOrDefaultAsync(p => p.ProductId == id);
+
+        if (productInDb == null || productInDb.SellerId != userId) return Unauthorized();
+
+        if (ModelState.IsValid)
+        {
+            // Cập nhật thông tin cơ bản
+            productInDb.ProductName = model.ProductName;
+            productInDb.Description = model.Description;
+            productInDb.Price = model.Price;
+            productInDb.Quantity = model.Quantity;
+            productInDb.IsNew = model.IsNew;
+            productInDb.CategoryId = model.CategoryId;
+            productInDb.Location = model.Location;
+            
+            // QUAN TRỌNG: Sửa xong phải chuyển về Pending để Admin duyệt lại
+            productInDb.Status = "Pending"; 
+
+            // Xử lý ảnh (Nếu người dùng có upload ảnh mới)
+            if (newImages != null && newImages.Length > 0)
+            {
+                // Cách đơn giản nhất: Xóa ảnh cũ, lưu ảnh mới
+                // (Thực tế bạn có thể làm UI phức tạp hơn để xóa từng ảnh lẻ)
+                
+                // 1. Xóa ảnh cũ trong DB
+                _context.ProductImages.RemoveRange(productInDb.ProductImages);
+                
+                // 2. Thêm ảnh mới
+                var uploadsFolder = Path.Combine(_environment.WebRootPath, "images", "products");
+                for (int i = 0; i < newImages.Length; i++)
+                {
+                    var file = newImages[i];
+                    if (file.Length > 0)
+                    {
+                        var fileName = $"{id}_{DateTime.Now.Ticks}_{i}{Path.GetExtension(file.FileName)}";
+                        var filePath = Path.Combine(uploadsFolder, fileName);
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        var pImage = new ProductImage
+                        {
+                            ProductId = id,
+                            ImageUrl = $"/images/products/{fileName}",
+                            IsMain = (i == 0) // Mặc định cái đầu tiên là ảnh bìa
+                        };
+                        _context.ProductImages.Add(pImage);
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Cập nhật thành công! Sản phẩm đang chờ Admin duyệt lại.";
+            return RedirectToAction("Details", new { id = id });
+        }
+        
+        // Nếu lỗi thì load lại View
+        ViewBag.ParentCategories = new SelectList(await _context.Categories.Where(c => c.ParentId == null).ToListAsync(), "CategoryId", "CategoryName");
+        return View(model);
     }
 
-    // 2. Lấy danh mục cho Menu (SỬA ĐOẠN NÀY)
-    // Phải Include 'InverseParent' để lấy được danh mục con
-    var categories = await _context.Categories
-        .Include(c => c.InverseParent) // <--- QUAN TRỌNG: Để hiển thị menu đa cấp
-        .Where(c => c.ParentId == null)
-        .OrderBy(c => c.CategoryName)
-        .ToListAsync();
-
-    ViewBag.Categories = categories;
-    ViewBag.SearchQuery = q;
-
-    // Trả về View Index để tái sử dụng giao diện
-    return View("Index", await products.OrderByDescending(p => p.CreatedAt).ToListAsync());
-}
 }

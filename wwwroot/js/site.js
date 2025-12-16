@@ -76,21 +76,21 @@ $(function () {
     }
 });
 
-// --- PHẦN 3: TẠO SẢN PHẨM (Create Product) ---
+// --- PHẦN 3: TẠO & SỬA SẢN PHẨM (Create/Edit Product) ---
 $(function () {
     const parentCategory = $('#parentCategory');
     const childCategory = $('#childCategory');
-    const imageInput = $('#productImages'); // ID chuẩn bên View
+    // ĐÃ SỬA: Đổi productImages thành imageInput để khớp với View
+    const imageInput = $('#imageInput'); 
     const imagePreview = $('#imagePreview');
     const mainImageSelect = $('#mainImageSelect');
 
     // Chỉ chạy nếu đang ở trang có form này
-    if (imageInput.length === 0) return;
+    if (imageInput.length === 0 && parentCategory.length === 0) return;
 
     // 1. Load danh mục con
     parentCategory.on('change', function () {
         const parentId = $(this).val();
-        // Lấy URL từ data-url hoặc fallback về cứng (để an toàn)
         const url = $(this).data('url') || '/Product/GetChildCategories'; 
         
         childCategory.prop('disabled', true).html('<option value="">-- Đang tải... --</option>');
@@ -118,43 +118,68 @@ $(function () {
     imageInput.on('change', function (e) {
         const files = e.target.files;
         
-        // RESET lại giao diện
         imagePreview.empty(); 
         mainImageSelect.empty().append('<option value="">-- Chọn ảnh chính --</option>');
         mainImageSelect.prop('disabled', true);
 
         if (files.length === 0) return;
 
-        // Cảnh báo nếu ít hơn 3 ảnh
         if (files.length < 3) {
-            imagePreview.html('<div class="col-12"><div class="alert alert-warning py-2"><i class="bi bi-exclamation-triangle me-2"></i>Vui lòng chọn tối thiểu 3 ảnh.</div></div>');
+            imagePreview.html('<div class="col-12"><div class="alert alert-warning py-2 small"><i class="bi bi-exclamation-triangle me-2"></i>Vui lòng chọn tối thiểu 3 ảnh.</div></div>');
         }
 
-        // Mở khóa dropdown
         mainImageSelect.prop('disabled', false);
 
-        // Duyệt file
-        $.each(files, function(index, file) {
+        Array.from(files).forEach((file, index) => {
             const reader = new FileReader();
             reader.onload = function (event) {
                 const html = `
-                    <div class="col-6 col-md-3 mb-3">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <img src="${event.target.result}" class="card-img-top" style="height: 120px; object-fit: contain;">
-                            <div class="card-footer p-1 text-center small bg-white">
-                                <strong>Ảnh ${index + 1}</strong>
+                    <div class="col-4 col-md-3 mb-3">
+                        <div class="card h-100 border shadow-sm">
+                            <img src="${event.target.result}" class="card-img-top" style="height: 100px; object-fit: contain;">
+                            <div class="card-footer p-1 text-center small bg-white text-truncate">
+                                Ảnh ${index + 1}
                             </div>
                         </div>
                     </div>`;
                 imagePreview.append(html);
             };
             reader.readAsDataURL(file);
-
-            // Thêm vào dropdown
             mainImageSelect.append(`<option value="${index}">Ảnh ${index + 1}</option>`);
         });
 
-        // TỰ ĐỘNG CHỌN ẢNH ĐẦU TIÊN (UX tốt hơn)
         mainImageSelect.val(0);
     });
 });
+
+// --- LOGIC TÌM KIẾM LIVE SEARCH (ADMIN) ---
+// Biến này phải nằm ngoài hàm để giữ trạng thái
+var delayTimer;
+
+function autoSearch(inputElement) {
+    // 1. Xóa lệnh cũ
+    clearTimeout(delayTimer);
+
+    // 2. Đợi 500ms
+    delayTimer = setTimeout(function() {
+        var query = $(inputElement).val();
+        var form = $(inputElement).closest('form');
+        var url = form.attr('action');
+
+        // 3. Gửi AJAX
+        $.ajax({
+            url: url,
+            type: 'GET',
+            data: { searchString: query },
+            success: function(response) {
+                // 4. Thay thế bảng kết quả
+                // Lưu ý: View trả về phải có div id="searchResultTable" bao quanh bảng
+                var newTable = $(response).find('#searchResultTable').html();
+                $('#searchResultTable').html(newTable);
+            },
+            error: function() {
+                console.log("Lỗi tìm kiếm live");
+            }
+        });
+    }, 500);
+}

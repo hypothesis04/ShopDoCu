@@ -7,7 +7,14 @@
     var pendingList = Model.Where(u => u.Role == "SellerPending").ToList();
     var activeList = Model.Where(u => u.Role != "SellerPending").ToList();
 }
-
+<div class="container-fluid py-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-primary mb-0">Quản lý người dùng</h3>
+        <form method="get" action="/Admin/Users" class="d-flex" style="width: 300px;">
+            <input type="text" name="searchString" oninput="autoSearch(this)" class="form-control me-2" placeholder="Tìm tên, email, sđt..." value="@ViewBag.SearchString">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i></button>
+        </form>
+    </div>
 <h3 class="mb-4 text-primary">Danh sách chờ duyệt (@pendingList.Count)</h3>
 
 @if (pendingList.Any())
@@ -56,8 +63,8 @@ else
 
 <hr />
 
-<h3 class="mb-4">Quản lý người dùng hiện tại</h3>
-<table class="table table-bordered table-hover shadow-sm">
+<h3 class="mb-4">Kho dữ liệu Users</h3>
+<table class="table table-bordered table-hover shadow-sm" id="searchResultTable">
     <thead class="table-light">
         <tr>
             <th>ID</th>

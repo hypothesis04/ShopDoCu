@@ -1,21 +1,30 @@
 @model IEnumerable<ShopDoCu.Models.Product>
 @{
     ViewData["Title"] = "Mua sắm";
+    
+    // Lấy dữ liệu từ ViewBag
     var categories = ViewBag.Categories as IEnumerable<ShopDoCu.Models.Category>;
     var selectedId = ViewBag.SelectedCategoryId as int?;
+    var searchQuery = ViewBag.SearchQuery as string;
+    
+    // Lấy giá trị lọc giá hiện tại (để hiển thị lại trên form)
+    var currentMin = ViewBag.MinPrice as decimal?;
+    var currentMax = ViewBag.MaxPrice as decimal?;
 }
 
 <div class="container my-4">
     <div class="d-md-none mb-3">
-        <form class="d-flex" method="get" action="/Product/TimKiem">
-            <input class="form-control me-2" type="search" name="q" placeholder="Tìm kiếm..." value="@ViewBag.SearchQuery" />
+        <form class="d-flex" method="get" action="/Product/Index">
+            @if (selectedId != null) { <input type="hidden" name="categoryId" value="@selectedId" /> }
+            <input class="form-control me-2" type="search" name="q" placeholder="Tìm kiếm..." value="@searchQuery" />
             <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
         </form>
     </div>
 
-    <div class="row">
+    <div class="row g-4">
         <div class="col-lg-3 d-none d-lg-block">
-            <div class="card border-0 shadow-sm category-sidebar">
+            
+            <div class="card border-0 shadow-sm category-sidebar mb-4">
                 <div class="card-header bg-primary text-white fw-bold text-uppercase py-3">
                     <i class="bi bi-list-ul me-2"></i>Danh mục
                 </div>
@@ -29,9 +38,8 @@
                         foreach (var cat in categories)
                         {
                             var isActive = selectedId == cat.CategoryId;
-                            // Class 'category-item' để kích hoạt hover CSS
+                            
                             <div class="list-group-item list-group-item-action category-item p-0">
-                                
                                 <a href="/Product?categoryId=@cat.CategoryId" class="d-flex justify-content-between align-items-center text-decoration-none text-dark w-100 p-3 @(isActive ? "fw-bold text-primary" : "")">
                                     <span>@cat.CategoryName</span>
                                     @if (cat.InverseParent != null && cat.InverseParent.Any())
@@ -59,17 +67,66 @@
                     }
                 </div>
             </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white fw-bold py-3 border-bottom">
+                    <i class="bi bi-funnel me-2 text-primary"></i>Lọc theo giá
+                </div>
+                <div class="card-body">
+                    <form method="get" action="/Product/Index">
+                        @if (selectedId != null) { <input type="hidden" name="categoryId" value="@selectedId" /> }
+                        @if (!string.IsNullOrEmpty(searchQuery)) { <input type="hidden" name="q" value="@searchQuery" /> }
+
+                        <div class="mb-3">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="priceRange" id="priceAll" checked onclick="setPrice('', '')">
+                                <label class="form-check-label cursor-pointer" for="priceAll">Tất cả</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="priceRange" id="priceU5" onclick="setPrice(0, 5000000)">
+                                <label class="form-check-label cursor-pointer" for="priceU5">Dưới 5 triệu</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="priceRange" id="price5to10" onclick="setPrice(5000000, 10000000)">
+                                <label class="form-check-label cursor-pointer" for="price5to10">5 - 10 triệu</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="priceRange" id="price10to20" onclick="setPrice(10000000, 20000000)">
+                                <label class="form-check-label cursor-pointer" for="price10to20">10 - 20 triệu</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="priceRange" id="priceOver20" onclick="setPrice(20000000, '')">
+                                <label class="form-check-label cursor-pointer" for="priceOver20">Trên 20 triệu</label>
+                            </div>
+                        </div>
+
+                        <label class="form-label small fw-bold text-muted">Hoặc nhập khoảng giá:</label>
+                        <div class="d-flex align-items-center mb-3">
+                            <input type="number" class="form-control form-control-sm me-1" name="minPrice" id="minPriceInput" placeholder="Từ" value="@currentMin" min="0">
+                            <span class="text-muted">-</span>
+                            <input type="number" class="form-control form-control-sm ms-1" name="maxPrice" id="maxPriceInput" placeholder="Đến" value="@currentMax" min="0">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm w-100 fw-bold">Áp dụng</button>
+                    </form>
+                </div>
+            </div>
+
         </div>
 
         <div class="col-lg-9">
             <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded shadow-sm border">
                 <h5 class="mb-0 fw-bold text-primary">
-                    @if (ViewBag.SearchQuery != null) { <span>Kết quả tìm kiếm: "@ViewBag.SearchQuery"</span> }
+                    @if (!string.IsNullOrEmpty(searchQuery)) { <span>Kết quả tìm kiếm: "@searchQuery"</span> }
                     else { <span>Danh sách sản phẩm</span> }
                 </h5>
-                <form class="d-none d-md-flex" method="get" action="/Product/TimKiem" style="width: 300px;">
+                
+                <form class="d-none d-md-flex" method="get" action="/Product/Index" style="width: 300px;">
+                    @if (selectedId != null) { <input type="hidden" name="categoryId" value="@selectedId" /> }
+                    @if (currentMin != null) { <input type="hidden" name="minPrice" value="@currentMin" /> }
+                    @if (currentMax != null) { <input type="hidden" name="maxPrice" value="@currentMax" /> }
+                    
                     <div class="input-group">
-                        <input class="form-control border-end-0" type="search" name="q" placeholder="Tìm sản phẩm..." value="@ViewBag.SearchQuery" />
+                        <input class="form-control border-end-0" type="search" name="q" placeholder="Tìm tên sản phẩm..." value="@searchQuery" />
                         <button class="btn btn-outline-secondary border-start-0" type="submit"><i class="bi bi-search"></i></button>
                     </div>
                 </form>
@@ -122,15 +179,22 @@
                 }
                 else
                 {
-                    <div class="col-12">
-                        <div class="text-center py-5">
-                            <img src="https://cdn-icons-png.flaticon.com/512/4076/4076432.png" width="100" class="mb-3 opacity-50" alt="Empty">
-                            <h5 class="text-muted">Không tìm thấy sản phẩm nào!</h5>
-                            <a href="/Product" class="btn btn-outline-primary mt-2">Xem tất cả sản phẩm</a>
-                        </div>
+                    <div class="col-12 text-center py-5">
+                        <img src="https://cdn-icons-png.flaticon.com/512/4076/4076432.png" width="100" class="mb-3 opacity-50" alt="Empty">
+                        <h5 class="text-muted">Không tìm thấy sản phẩm nào!</h5>
+                        <p class="text-muted">Vui lòng thử tìm từ khóa khác hoặc xóa bộ lọc.</p>
+                        <a href="/Product" class="btn btn-outline-primary mt-2">Xem tất cả sản phẩm</a>
                     </div>
                 }
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    // Hàm JS để điền giá vào ô input khi chọn Radio Button
+    function setPrice(min, max) {
+        document.getElementById('minPriceInput').value = min;
+        document.getElementById('maxPriceInput').value = max;
+    }
+</script>

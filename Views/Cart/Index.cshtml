@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Giỏ hàng";
     
-    // Tính tổng tiền ban đầu để hiển thị
+    // Tính tổng tiền ban đầu
     decimal tongTien = 0;
     if (Model != null && Model.Any())
     {
@@ -10,122 +10,142 @@
     }
 }
 
-<div class="container my-4">
-    <h3 class="mb-4 text-primary"><i class="bi bi-cart3 me-2"></i>Giỏ hàng của bạn</h3>
-    
+<div class="container my-5">
+    <h3 class="fw-bold mb-4 text-primary"><i class="bi bi-bag-check-fill me-2"></i>Giỏ hàng của bạn</h3>
+
     @if (Model != null && Model.Any())
     {
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-0">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="ps-4">Ảnh</th>
-                            <th>Tên sản phẩm</th>
-                            <th>Giá</th>
-                            <th>Số lượng</th>
-                            <th>Thành tiền</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            var product = item.Product;
-                            var mainImage = product?.ProductImages?.FirstOrDefault(img => img.IsMain == true) ?? product?.ProductImages?.FirstOrDefault();
-                            var imageUrl = mainImage?.ImageUrl ?? "/images/no-image.jpg";
-                            
-                            decimal gia = product?.Price ?? 0;
-                            int soLuong = item.Quantity ?? 0;
-                            decimal thanhTien = gia * soLuong;
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0 table-hover">
+                            <thead class="bg-light text-muted small text-uppercase">
+                                <tr>
+                                    <th class="ps-4 py-3">Sản phẩm</th>
+                                    <th class="text-center">Đơn giá</th>
+                                    <th class="text-center" style="width: 120px;">Số lượng</th>
+                                    <th class="text-end pe-4">Thành tiền</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    var product = item.Product;
+                                    var mainImage = product?.ProductImages?.FirstOrDefault(img => img.IsMain == true) ?? product?.ProductImages?.FirstOrDefault();
+                                    var imageUrl = mainImage?.ImageUrl ?? "/images/no-image.jpg";
+                                    
+                                    decimal gia = product?.Price ?? 0;
+                                    int soLuong = item.Quantity ?? 0;
+                                    decimal thanhTien = gia * soLuong;
 
-                            <tr>
-                                <td class="ps-4" style="width: 100px">
-                                    <img src="@imageUrl" alt="@product?.ProductName" class="img-thumbnail rounded" style="width: 80px; height: 80px; object-fit: cover;" />
-                                </td>
-                                <td>
-                                    <div class="fw-bold">
-                                        <a href="/Product/Details/@item.ProductId" class="text-decoration-none text-dark">
-                                            @product?.ProductName
-                                        </a>
-                                    </div>
-                                    <small class="text-muted">Kho còn: <span class="fw-bold">@product?.Quantity</span></small>
-                                </td>
-                                <td>@gia.ToString("N0") đ</td>
-                                <td>
-                                    <div class="input-group input-group-sm" style="width: 120px;">
-                                        <input type="number" 
-                                               value="@soLuong" 
-                                               min="1" 
-                                               class="form-control text-center quantity-input" 
-                                               data-product-id="@item.ProductId"
-                                               onchange="updateQuantity(this, @item.ProductId)" />
-                                    </div>
-                                </td>
-                                <td class="fw-bold text-primary" id="item-total-@item.ProductId">
-                                    @thanhTien.ToString("N0") đ
-                                </td>
-                                <td>
-                                    <form asp-action="Remove" method="post" class="d-inline">
-                                        <input type="hidden" name="productId" value="@item.ProductId" />
-                                        <button type="submit" class="btn btn-sm btn-outline-danger border-0" onclick="return confirm('Xóa sản phẩm này khỏi giỏ?');" title="Xóa">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                    <tfoot class="bg-light">
-                        <tr>
-                            <td colspan="4" class="text-end fw-bold py-3 fs-5">Tổng cộng:</td>
-                            <td colspan="2" class="fw-bold text-danger py-3 fs-4" id="grand-total">
-                                @tongTien.ToString("N0") đ
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
+                                    <tr>
+                                        <td class="ps-4 py-3">
+                                            <div class="d-flex align-items-center">
+                                                <img src="@imageUrl" class="rounded border bg-white" style="width: 80px; height: 80px; object-fit: contain;">
+                                                <div class="ms-3">
+                                                    <a href="/Product/Details/@item.ProductId" class="fw-bold text-decoration-none text-dark d-block mb-1">
+                                                        @product?.ProductName
+                                                    </a>
+                                                    <small class="text-muted d-block">
+                                                        Kho còn: <span class="fw-bold text-dark">@product?.Quantity</span>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center text-muted">@gia.ToString("N0")₫</td>
+                                        <td>
+                                            <div class="input-group input-group-sm">
+                                                <input type="number" 
+                                                       value="@soLuong" 
+                                                       min="1" 
+                                                       class="form-control text-center quantity-input" 
+                                                       data-product-id="@item.ProductId"
+                                                       onchange="updateQuantity(this, @item.ProductId)" />
+                                            </div>
+                                        </td>
+                                        <td class="text-end fw-bold text-primary pe-4" id="item-total-@item.ProductId">
+                                            @thanhTien.ToString("N0")₫
+                                        </td>
+                                        <td class="text-center pe-3">
+                                            <form asp-action="Remove" method="post" class="d-inline">
+                                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                                <button type="submit" class="btn btn-link text-danger p-0 border-0" onclick="return confirm('Xóa sản phẩm này?');" title="Xóa">
+                                                    <i class="bi bi-trash fs-5"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div class="d-flex justify-content-between align-items-center mt-4">
-            <a href="/" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-2"></i>Tiếp tục mua sắm
-            </a>
-            <a href="/Order/Checkout" class="btn btn-success btn-lg px-5 shadow-sm">
-                Thanh toán <i class="bi bi-arrow-right ms-2"></i>
-            </a>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm p-4 sticky-top rounded-3" style="top: 20px;">
+                    <h5 class="fw-bold mb-3 border-bottom pb-3">Cộng giỏ hàng</h5>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Tạm tính:</span>
+                        <span class="fw-bold" id="sub-total">@tongTien.ToString("N0")₫</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="text-muted">Giảm giá:</span>
+                        <span class="text-success fw-bold">-0₫</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-4 pt-3 border-top">
+                        <span class="fs-5 fw-bold">Tổng cộng:</span>
+                        <span class="fs-4 fw-bold text-danger" id="grand-total">
+                            @tongTien.ToString("N0")₫
+                        </span>
+                    </div>
+
+                    <a href="/Order/Checkout" class="btn btn-primary w-100 py-3 fw-bold text-uppercase shadow-sm mb-3">
+                        Tiến hành thanh toán <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                    
+                    <a href="/" class="btn btn-outline-secondary w-100 py-2">
+                        <i class="bi bi-arrow-left me-2"></i>Mua thêm sản phẩm khác
+                    </a>
+                </div>
+            </div>
         </div>
     }
     else
     {
-        <div class="text-center py-5">
+        <div class="text-center py-5 bg-light rounded-3">
             <div class="mb-3">
-                <i class="bi bi-cart-x text-muted" style="font-size: 4rem;"></i>
+                <i class="bi bi-cart-x text-muted opacity-50" style="font-size: 5rem;"></i>
             </div>
-            <h4 class="text-muted">Giỏ hàng của bạn đang trống</h4>
-            <p class="text-muted mb-4">Hãy thêm sản phẩm vào giỏ để tiến hành thanh toán nhé!</p>
-            <a href="/" class="btn btn-primary px-4">Đi mua sắm ngay</a>
+            <h4 class="text-muted fw-bold">Giỏ hàng của bạn đang trống</h4>
+            <p class="text-muted mb-4">Hãy dạo một vòng chợ và chọn món đồ ưng ý nhé!</p>
+            <a href="/" class="btn btn-primary px-5 py-2 fw-bold shadow-sm">
+                Đi mua sắm ngay
+            </a>
         </div>
     }
 </div>
 
 @section Scripts {
     <script>
-        // Hàm cập nhật số lượng qua AJAX
         function updateQuantity(inputElement, productId) {
             var newQuantity = $(inputElement).val();
 
-            // 1. Kiểm tra sơ bộ (Client side)
+            // 1. Kiểm tra Client side
             if (newQuantity < 1) {
                 alert("Số lượng tối thiểu là 1");
                 $(inputElement).val(1);
                 newQuantity = 1;
             }
 
-            // 2. Gửi AJAX lên Server
+            // 2. Gửi AJAX
             $.ajax({
-                url: '/Cart/UpdateCart', // Gọi đến hàm UpdateCart trong CartController
+                url: '/Cart/UpdateCart',
                 type: 'POST',
                 data: { 
                     productId: productId, 
@@ -133,27 +153,28 @@
                 },
                 success: function (response) {
                     if (response.success) {
-                        // Cập nhật thành công -> Đổi số tiền trên giao diện
+                        // Cập nhật giá tiền từng món
                         $('#item-total-' + productId).text(response.itemTotal);
-                        $('#grand-total').text(response.cartTotal);
                         
-                        // Hiệu ứng nháy xanh nhẹ để báo hiệu đã cập nhật
+                        // Cập nhật Tổng tiền (Cả ở mục Tạm tính và Tổng cộng)
+                        $('#grand-total').text(response.cartTotal);
+                        $('#sub-total').text(response.cartTotal); 
+                        
+                        // Hiệu ứng nháy xanh
                         $(inputElement).addClass('bg-success-subtle');
                         setTimeout(() => $(inputElement).removeClass('bg-success-subtle'), 500);
                     } else {
                         // Lỗi (Vượt quá tồn kho)
-                        alert(response.message); // Hiện popup báo lỗi
+                        alert(response.message);
                         
                         if (response.maxQuantity) {
-                            // Tự động sửa lại số lượng về mức max
                             $(inputElement).val(response.maxQuantity);
-                            // Gọi lại để tính tiền đúng theo số max
-                            updateQuantity(inputElement, productId); 
+                            updateQuantity(inputElement, productId); // Gọi lại đệ quy để tính đúng giá tiền
                         }
                     }
                 },
                 error: function () {
-                    alert('Lỗi kết nối đến máy chủ. Vui lòng thử lại sau.');
+                    alert('Lỗi kết nối server!');
                 }
             });
         }

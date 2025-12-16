@@ -32,18 +32,34 @@ public class AccountController : Controller
             return View(model);
         }
 
-        // Lấy người dùng theo UserName để đối chiếu mật khẩu
+        // 1. Lấy user từ DB
         var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == model.UserName);
-        // So sánh mật khẩu người dùng nhập với hash đã lưu
+
+        // 2. Kiểm tra tài khoản và mật khẩu
         if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
         {
             ModelState.AddModelError(string.Empty, "Tên đăng nhập hoặc mật khẩu không đúng");
             return View(model);
         }
 
+        // --- KIỂM TRA KHÓA TÀI KHOẢN ---
+        if (user.IsLocked == true)
+        {
+            // Lấy lý do khóa (nếu null thì ghi mặc định)
+            string reason = user.LockReason ?? "Vi phạm chính sách cộng đồng.";
+            
+            // Báo lỗi ra màn hình
+            ModelState.AddModelError(string.Empty, "⛔ Tài khoản của bạn đã bị khóa!");
+            ModelState.AddModelError(string.Empty, $"Ngày khoá: {user.LockedAt?.ToString("dd/MM/yyyy HH:mm") ?? "Không rõ"}");
+            ModelState.AddModelError(string.Empty, $"Lý do: {reason}");
+            // Trả về view luôn, KHÔNG cho chạy xuống hàm SignIn
+            return View(model);
+        }
+        // -----------------------------------------------
+
+        // 3. Nếu không bị khóa thì mới cho đăng nhập
         SignIn(user);
 
-        // Nếu là admin thì redirect sang trang admin, không phải thì về trang chủ
         if (user.Role == "Admin")
         {
             return RedirectToAction("Index", "Admin");
@@ -238,7 +254,7 @@ public class AccountController : Controller
         {
             // Chuyển thẳng sang trang quản lý cửa hàng hoặc đăng sản phẩm
             // Tạm thời chuyển đến trang đăng bán
-            return RedirectToAction("DangBan", "Product");
+            return RedirectToAction("Create", "Product");
         }
 
         // 2. Nếu là Admin
@@ -254,6 +270,10 @@ public class AccountController : Controller
         {
             // Đánh dấu để View biết và hiển thị thông báo "Đang chờ duyệt"
             ViewBag.IsPending = true;
+        }
+        else
+        {
+            ViewBag.IsPending = false;
         }
 
         // Chuẩn bị dữ liệu cho form (lấy từ thông tin sẵn có của user)

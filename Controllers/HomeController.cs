@@ -37,8 +37,12 @@ namespace ShopDoCu.Controllers
             ViewBag.Categories = categories;
             return View(products);
         }
+        public IActionResult Policies()
+        {
+            return View();
+        }
     }
-
+   
 
 }
 

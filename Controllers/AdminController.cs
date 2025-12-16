@@ -273,13 +273,15 @@ public class AdminController : Controller
 
         var user = await _context.Users.FindAsync(id);
         if (user == null) return NotFound();
-
-        // Cách 1: Xoá luôn tài khoản đăng ký này (theo nút "Xoá" ở giao diện cũ)
-        _context.Users.Remove(user);
-
-        // Cách 2: (Nếu bạn muốn giữ tài khoản nhưng huỷ yêu cầu bán) thì dùng dòng dưới và bỏ dòng Remove đi:
-        // user.Role = "User"; 
-
+        // Cách 2: (Nếu bạn muốn giữ tài khoản nhưng huỷ yêu cầu bán) thì dùng dòng dưới và bỏ dòng Remove đi: 
+        if (user.Role != "Seller")
+        {
+             user.Role = "User";
+        }
+        else
+        {
+            user.Role = "OldSeller";  
+        }
         await _context.SaveChangesAsync();
 
         return RedirectToAction("Users");

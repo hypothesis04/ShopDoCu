@@ -92,14 +92,35 @@ public class ProductController : Controller
    [HttpGet]
     public async Task<IActionResult> Create(bool success = false)
     {
-        // 1. Kiểm tra đăng nhập & Quyền Seller
+        // 1. Kiểm tra đăng nhập
         var userId = HttpContext.Session.GetInt32("UserId");
+        if (userId == null) return RedirectToAction("Login", "Account", new { returnUrl = "/Product/Create" });
+
+        // 2. Lấy Role từ Session
         var role = HttpContext.Session.GetString("Role");
 
-        if (userId == null) return RedirectToAction("Login", "Account", new { returnUrl = "/Product/Create" });
-        if (role != "Seller") return RedirectToAction("SellerRegistration", "Account");
+        // --- ĐOẠN CODE FIX LỖI LOOP (VÒNG LẶP) ---
+        // Nếu Session nói "không phải Seller", khoan hãy đuổi đi.
+        // Hãy kiểm tra Database xem Admin đã duyệt chưa mà Session chưa kịp cập nhật.
+        if (role != "Seller")
+        {
+            var userInDb = await _context.Users.FindAsync(userId);
+            
+            // Nếu trong DB đã là Seller rồi -> Cập nhật lại Session ngay
+            if (userInDb != null && userInDb.Role == "Seller")
+            {
+                HttpContext.Session.SetString("Role", "Seller");
+                role = "Seller"; // Gán lại biến local để chạy tiếp code bên dưới
+            }
+            else
+            {
+                // Nếu DB vẫn chưa duyệt thật -> Lúc này mới đuổi về trang đăng ký
+                return RedirectToAction("SellerRegistration", "Account");
+            }
+        }
+        // ------------------------------------------
 
-        // 2. Chuẩn bị dữ liệu danh mục cha
+        // 3. Chuẩn bị dữ liệu danh mục cha
         var parentCategories = await _context.Categories
             .Where(c => c.ParentId == null)
             .OrderBy(c => c.CategoryName)
@@ -107,7 +128,7 @@ public class ProductController : Controller
 
         ViewBag.ParentCategories = new SelectList(parentCategories, "CategoryId", "CategoryName");
         
-        // 3. Truyền cờ thành công sang View
+        // 4. Truyền cờ thành công sang View
         ViewBag.IsSuccess = success; 
 
         return View(new ProductCreateViewModel());

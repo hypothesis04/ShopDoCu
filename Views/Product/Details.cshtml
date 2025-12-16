@@ -3,14 +3,32 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = Model.ProductName;
-    Layout = "~/Views/Shared/_Layout.cshtml"; 
-    
-    var mainImage = Model.ProductImages.FirstOrDefault(i => i.IsMain == true)?.ImageUrl 
-                    ?? Model.ProductImages.FirstOrDefault()?.ImageUrl 
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var mainImage = Model.ProductImages.FirstOrDefault(i => i.IsMain == true)?.ImageUrl
+                    ?? Model.ProductImages.FirstOrDefault()?.ImageUrl
                     ?? "/images/no-image.png";
+
+    // Lấy ID người dùng hiện tại
+    var currentUserId = HttpContextAccessor.HttpContext?.Session?.GetInt32("UserId");
+    var isSeller = (currentUserId != null && Model.SellerId == currentUserId);
+    var isOwner = (currentUserId != null && Model.SellerId == currentUserId);
+
+    // 3. KIỂM TRA TRẠNG THÁI NGƯỜI BÁN 
+    bool isSellerRevoked = false; // Mặc định là bình thường
+    if (Model.Seller != null)
+    {
+        bool isDemoted = (Model.Seller.Role != "Seller" && Model.Seller.Role != "Admin");
+        bool isLocked = (Model.Seller.IsLocked == true || Model.Seller.Role == "OldSeller");
+        if (isDemoted || isLocked)
+        {
+            isSellerRevoked = true;
+        }
+    }
 }
 
-<div class="container py-5"> <div class="row">
+<div class="container py-5">
+    <div class="row">
         <div class="col-lg-5 mb-4">
             <div class="card shadow-sm border-0">
                 <div class="card-body p-2">
@@ -34,7 +52,7 @@
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
                     <h2 class="fw-bold text-dark mb-2">@Model.ProductName</h2>
-                    
+
                     <div class="mb-4">
                         <span class="h3 text-danger fw-bold me-3">@Model.Price.ToString("N0") VNĐ</span>
                         <span class="badge @(Model.IsNew == true ? "bg-success" : "bg-warning text-dark")">
@@ -59,53 +77,50 @@
                     {
                         <form asp-action="AddToCart" asp-controller="Product" method="post">
                             <input type="hidden" name="productId" value="@Model.ProductId" />
-                            
+
                             <div class="row g-3 align-items-end">
                                 <div class="col-md-4">
                                     <label class="form-label fw-bold">Số lượng:</label>
                                     <div class="input-group">
-                                        <button class="btn btn-outline-secondary" type="button" onclick="stepDown()">-</button>
-                                        <input type="number" name="quantity" id="quantityInput" class="form-control text-center" value="1" min="1" max="@Model.Quantity">
-                                        <button class="btn btn-outline-secondary" type="button" onclick="stepUp()">+</button>
+                                        <button class="btn btn-outline-secondary" type="button" onclick="stepDown()" @(isSeller ? "disabled" : "")>-</button>
+                                        <input type="number" name="quantity" id="quantityInput" class="form-control text-center" value="1" min="1" max="@Model.Quantity" @(isSeller ? "disabled" : "")>
+                                        <button class="btn btn-outline-secondary" type="button" onclick="stepUp()" @(isSeller ? "disabled" : "")>+</button>
                                     </div>
                                     <small class="text-muted">Có sẵn: @Model.Quantity</small>
                                 </div>
-                                
+
                                 <div class="col-md-8">
-                                    @{
-    // Lấy ID người dùng đang đăng nhập từ Session
-    var currentUserId = HttpContextAccessor.HttpContext.Session.GetInt32("UserId");
-}
-
-@if (Model.SellerId == currentUserId)
-{
-    <div class="alert alert-warning border-warning d-flex align-items-center" role="alert">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-        <div>
-            <strong>Đây là sản phẩm của bạn!</strong><br/>
-            Bạn không thể tự mua hàng do chính mình đăng bán.
-        </div>
-    </div>
-    
-    <a href="/Product/Edit/@Model.ProductId" class="btn btn-outline-primary w-100 mt-2">
-        <i class="bi bi-pencil-square me-2"></i>Chỉnh sửa sản phẩm này
-    </a>
-}
-else
-{
-    <form asp-controller="Product" asp-action="AddToCart" method="post">
-        <input type="hidden" name="productId" value="@Model.ProductId" />
-        
-        <div class="d-flex align-items-center mb-3">
-            <span class="me-3">Số lượng:</span>
-            <input type="number" name="quantity" value="1" min="1" max="@Model.Quantity" class="form-control" style="width: 80px;">
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm">
-            <i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ hàng
-        </button>
-    </form>
-}
+                                    @if (isSeller)
+                                    {
+                                        // HIỂN THỊ NẾU LÀ NGƯỜI BÁN
+                                        <div class="alert alert-warning border-warning d-flex align-items-center mb-0 p-2" role="alert">
+                                            <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
+                                            <div class="small lh-sm">
+                                                <strong>Sản phẩm của bạn!</strong><br />
+                                                Không thể tự đặt hàng.
+                                            </div>
+                                        </div>
+                                        <a href="/Product/Edit/@Model.ProductId" class="btn btn-outline-primary w-100 mt-2">
+                                            <i class="bi bi-pencil-square me-2"></i>Chỉnh sửa sản phẩm
+                                        </a>
+                                    }
+                                    else @if (isSellerRevoked)
+                                    {
+                                        // HIỂN THỊ NẾU LÀ NGƯỜI BÁN BỊ HUỶ QUYỀN
+                                        <div class="alert alert-danger border-danger d-flex align-items-center mb-0 p-2" role="alert">
+                                            <i class="bi bi-x-circle-fill me-2 fs-4"></i>
+                                            <div class="small lh-sm">
+                                                <strong>Chủ shop này đã bị khoá quyền bán hàng!</strong><br />
+                                                Không thể đặt hàng sản phẩm này.
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        // HIỂN THỊ NẾU LÀ KHÁCH MUA
+                                        <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm" style="height: 48px;"> <i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ hàng
+                                        </button>
+                                    }
                                 </div>
                             </div>
                         </form>
@@ -117,7 +132,7 @@ else
                             Sản phẩm này hiện đang tạm hết hàng hoặc ngừng kinh doanh.
                         </div>
                     }
-                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -129,7 +144,6 @@ else
             document.getElementById('mainProductImage').src = src;
         }
 
-        // Script tăng giảm số lượng
         function stepUp() {
             var input = document.getElementById('quantityInput');
             var max = parseInt(input.getAttribute('max'));

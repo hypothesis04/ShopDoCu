@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ShopDoCu")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+441120d7e614674c70991d79ad74931ff52313aa")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+af15d437e69f6e71d3f722473830e42d335579b9")]
 [assembly: System.Reflection.AssemblyProductAttribute("ShopDoCu")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ShopDoCu")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -173,11 +173,12 @@
             });
 
             // 3. PREVIEW ẢNH
-            $('#imageInput').on('change', function(e) {
+        $('#imageInput').off('change').on('change', function(e) {
                 const files = e.target.files;
                 const preview = $('#imagePreview');
                 const mainSelect = $('#mainImageSelect');
                 
+                // Reset vùng hiển thị ngay lập tức
                 preview.empty();
                 mainSelect.empty().append('<option value="">-- Chọn ảnh chính --</option>').prop('disabled', true);
                 
@@ -188,21 +189,29 @@
                 
                 mainSelect.prop('disabled', false);
 
+                // Duyệt qua file để hiển thị
                 Array.from(files).forEach((file, index) => {
                     const reader = new FileReader();
                     reader.onload = function(event) {
+                        // Tạo thẻ HTML ảnh
                         const html = `
                             <div class="col-4 col-md-3">
-                                <div class="card border">
+                                <div class="card border h-100 shadow-sm position-relative">
                                     <img src="${event.target.result}" class="card-img-top" style="height: 100px; object-fit: cover;">
-                                    <div class="card-footer p-1 text-center small bg-light">Ảnh ${index + 1}</div>
+                                    <div class="card-footer p-1 text-center small bg-light fw-bold text-truncate">Ảnh ${index + 1}</div>
                                 </div>
                             </div>`;
+                        
                         preview.append(html);
                     };
+                    // Bắt đầu đọc file
                     reader.readAsDataURL(file);
+                    
+                    // Thêm vào dropdown chọn ảnh chính
                     mainSelect.append(`<option value="${index}">Ảnh ${index + 1}</option>`);
                 });
+                
+                // Mặc định chọn cái đầu tiên
                 mainSelect.val(0);
             });
             $('#statusSwitch').on('change', function() {

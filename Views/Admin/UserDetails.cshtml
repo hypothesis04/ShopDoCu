@@ -76,7 +76,6 @@
         <div class="card-footer bg-light">
 
             @if (Model.Role == "SellerPending")
-
             {
 
                 <form asp-action="ApproveSeller" asp-route-id="@Model.UserId" method="post" class="d-inline">
@@ -96,7 +95,28 @@
                 </form>
 
             }
+            @if (Model.Role == "Seller")
+            {
+                <form asp-action="RejectSeller" asp-route-id="@Model.UserId" method="post" class="d-inline">
+
+                    @Html.AntiForgeryToken()
+
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-person-x-fill me-2"></i>Huỷ quyền người bán</button>
+
+                </form>
+            }
+            @if (Model.Role == "OldSeller")
+            {
+                <form asp-action="ApproveSeller" asp-route-id="@Model.UserId" method="post" class="d-inline">
+
+                    @Html.AntiForgeryToken()
+
+                    <button type="submit" class="btn btn-success"><i class="bi bi-person-check-fill me-2"></i>Phục hồi quyền người bán</button>
+
+                </form>
+            }
             <a href="@Url.Action("Users", "Admin")" class="btn btn-secondary">Quay lại danh sách</a>
+             
         </div>
     </div>
 </div>

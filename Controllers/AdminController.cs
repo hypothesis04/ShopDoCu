@@ -35,7 +35,7 @@ public class AdminController : Controller
     public async Task<IActionResult> Index()
     {
         if (!IsAdmin()) return RedirectToAction("Index", "Home");
-     var totalUsers = await _context.Users.CountAsync();
+        var totalUsers = await _context.Users.CountAsync();
         var totalProducts = await _context.Products.CountAsync();
         var totalOrders = await _context.Orders.CountAsync();
         var totalCategories = await _context.Categories.CountAsync();

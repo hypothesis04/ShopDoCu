@@ -201,8 +201,12 @@ footer {
 
 .category-sidebar .list-group-item:hover {
     background-color: #f8f9fa;
-    color: #0d6efd; /* Màu xanh chủ đạo */
+    color: #0d6efd; 
     border-left-color: #0d6efd;
+
+   
+    z-index: 1001; 
+    position: relative;
 }
 
 .category-sidebar .list-group-item.active {
@@ -223,14 +227,30 @@ footer {
     background: white;
     border: 1px solid #dee2e6;
     box-shadow: 4px 4px 10px rgba(0,0,0,0.1);
-    z-index: 100;
+    z-index: 1000;
     border-radius: 0 8px 8px 8px;
     padding: 5px 0;
+    margin-left: -2px;
 }
 
-/* Khi hover vào cha -> Hiện con */
+/* Khi hover vào cha -> Hiện con */ 
 .category-sidebar .category-item:hover .submenu {
     display: block;
+}
+/* Tạo vùng cảm ứng mở rộng cho submenu */
+.category-sidebar .submenu::before {
+    content: "";
+    position: absolute;
+    /* Mở rộng vùng cảm ứng theo chiều dọc để đỡ bị mất khi rê chéo */
+    top: -5px; 
+    bottom: -5px;
+    
+    /* Mở rộng vùng cảm ứng sang trái */
+    left: -30px; 
+    width: 40px; 
+    
+    background: transparent; 
+
 }
 
 .category-sidebar .submenu a {
@@ -286,3 +306,54 @@ footer {
     overflow: hidden;
     height: 2.8em; /* Giới hạn tên 2 dòng */
 }
+    /* --- STYLE LOGO MỚI (SẠCH & SANG) --- */
+    .hero-logo-modern {
+        display: flex;
+        align-items: center;
+        gap: 18px; /* Khoảng cách giữa icon và chữ */
+    }
+
+    /* Khối chứa Icon: Tròn, Trắng, Nổi */
+    .hero-logo-modern .icon-wrapper {
+        width: 65px;
+        height: 65px;
+        background-color: #ffffff;
+        border-radius: 50%; /* Bo tròn hoàn hảo */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #0d6efd; /* Icon màu xanh theo tông web */
+        font-size: 32px;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.15); /* Đổ bóng nhẹ tạo độ nổi */
+        transition: all 0.3s ease;
+    }
+
+    /* Hiệu ứng nhún nhẹ khi rê chuột */
+    .hero-logo-modern:hover .icon-wrapper {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    /* Phần Chữ */
+    .hero-logo-modern .text-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .hero-logo-modern .brand-main {
+        font-size: 1.8rem;
+        font-weight: 800; /* Chữ cực đậm */
+        text-transform: uppercase;
+        color: #ffffff;
+        line-height: 1;
+        letter-spacing: 0.5px; /* Khoảng cách chữ thoáng hơn */
+        font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    .hero-logo-modern .brand-tagline {
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: rgba(255,255,255, 0.9); /* Màu trắng hơi mờ chút */
+        margin-top: 6px;
+        letter-spacing: 0.5px;
+    }

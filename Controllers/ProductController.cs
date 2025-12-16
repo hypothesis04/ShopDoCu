@@ -29,10 +29,20 @@ public class ProductController : Controller
             .Include(p => p.Category)
             .Where(p => p.Status == "Active");
 
+       
         // 2. TÌM KIẾM
         if (!string.IsNullOrWhiteSpace(q))
         {
-            productsQuery = productsQuery.Where(p => (p.ProductName ?? "").Contains(q) || (p.Description ?? "").Contains(q));
+            // Nếu từ khóa ngắn (<= 3 ký tự) -> Chỉ tìm tên (tránh ra IPS, Chip...)
+            if (q.Length <= 3) 
+            {
+                productsQuery = productsQuery.Where(p => (p.ProductName ?? "").Contains(q));
+            }
+            // Nếu từ khóa dài -> Tìm cả tên và mô tả
+            else 
+            {
+                productsQuery = productsQuery.Where(p => (p.ProductName ?? "").Contains(q) || (p.Description ?? "").Contains(q));
+            }
         }
 
         // 3. DANH MỤC

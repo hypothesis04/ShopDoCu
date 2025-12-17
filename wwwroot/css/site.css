@@ -14,7 +14,9 @@ html {
 }
 
 body {
-  margin-bottom: 60px; /* Tránh footer đè nội dung nếu footer fixed */
+  min-height: 100vh;      
+  display: flex;          
+  flex-direction: column;
   background: radial-gradient(circle at 20% 20%, #f2f6ff, #ffffff 30%), radial-gradient(circle at 80% 0%, #e6f0ff, #ffffff 25%), #f7f9fc;
   color: #1f2a44;
 }
@@ -332,4 +334,25 @@ footer {
     color: rgba(255,255,255, 0.9);
     margin-top: 6px;
     letter-spacing: 0.5px;
+}
+/* Style riêng cho Footer */
+.footer-link {
+    color: #b8c4e0;
+    transition: all 0.2s ease;
+}
+
+.footer-link:hover {
+    color: #fff; /* Hover vào sáng lên */
+    padding-left: 5px; /* Dịch sang phải 1 chút nhìn cho động */
+}
+
+.hover-text-white:hover {
+    color: #fff !important;
+}
+
+.bg-opacity-10 {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+.main-content-wrapper {
+    flex: 1; /* Quan trọng nhất: Tự động giãn chiều cao để đẩy Footer xuống đáy */
 }

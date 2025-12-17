@@ -34,15 +34,8 @@ public class ProductController : Controller
         if (!string.IsNullOrWhiteSpace(q))
         {
             // Nếu từ khóa ngắn (<= 3 ký tự) -> Chỉ tìm tên (tránh ra IPS, Chip...)
-            if (q.Length <= 3) 
-            {
-                productsQuery = productsQuery.Where(p => (p.ProductName ?? "").Contains(q));
-            }
-            // Nếu từ khóa dài -> Tìm cả tên và mô tả
-            else 
-            {
-                productsQuery = productsQuery.Where(p => (p.ProductName ?? "").Contains(q) || (p.Description ?? "").Contains(q));
-            }
+            productsQuery = productsQuery.Where(p => (p.ProductName ?? "").Contains(q));
+       
         }
 
         // 3. DANH MỤC

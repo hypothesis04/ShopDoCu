@@ -21,7 +21,7 @@ public class SellerChannelController : Controller
         var userId = HttpContext.Session.GetInt32("UserId");
         if (userId == null) return false;
 
-        // 2. [QUAN TRỌNG] Truy vấn Database để lấy quyền mới nhất
+        // 2. Truy vấn Database để lấy quyền mới nhất
         // (Không tin tưởng hoàn toàn vào Session cũ)
         var userInDb = _context.Users.FirstOrDefault(u => u.UserId == userId);
 
@@ -44,7 +44,16 @@ public class SellerChannelController : Controller
         // 4. Trả về kết quả dựa trên dữ liệu thật trong DB
         return userInDb.Role == "Seller";
     }
-
+    // Hàm này giúp đếm số đơn hàng "Pending" của Shop
+    private async Task LoadSidebarData()
+    {
+        var userId = HttpContext.Session.GetInt32("UserId");
+        if (userId != null)
+        {
+            ViewBag.CountPending = await _context.Orders
+                .CountAsync(o => o.SellerId == userId && o.Status == "Pending");
+        }
+    }
     // ==========================================
     // 1. DASHBOARD (TRANG CHỦ SHOP)
     // ==========================================
@@ -52,6 +61,7 @@ public class SellerChannelController : Controller
     {
         if (!IsSeller()) return RedirectToAction("Login", "Account");
         var userId = HttpContext.Session.GetInt32("UserId");
+        await LoadSidebarData();
 
         // Thống kê Doanh thu (Chỉ tính đơn đã hoàn thành)
         var totalRevenue = await _context.Orders
@@ -205,10 +215,16 @@ public class SellerChannelController : Controller
         var products = await productsQuery.OrderByDescending(p => p.CreatedAt).ToListAsync();
 
         // Lấy danh mục cho Sidebar
-        ViewBag.Categories = await _context.Categories
-            .Where(c => c.ParentId == null && c.Products.Any(p => p.SellerId == userId))
-            .ToListAsync();
+        var sellerCategoryIds = await _context.Products
+         .Where(p => p.SellerId == userId)
+         .Select(p => p.CategoryId)
+         .Distinct()
+         .ToListAsync();
 
+        // 3. Lấy thông tin chi tiết của các danh mục đó để hiện lên Sidebar
+        ViewBag.Categories = await _context.Categories
+            .Where(c => sellerCategoryIds.Contains(c.CategoryId))
+            .ToListAsync();
         // Lưu trạng thái lọc
         ViewBag.SelectedCategoryId = categoryId;
         ViewBag.Search = search;

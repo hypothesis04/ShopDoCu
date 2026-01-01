@@ -74,7 +74,7 @@ public class OrderController : Controller
             if (userCoupon != null)
             {
                 globalDiscount = userCoupon.DiscountAmount;
-                // [QUAN TRỌNG] Tìm Coupon gốc để lấy ID lưu vào lịch sử
+                //  Tìm Coupon gốc để lấy ID lưu vào lịch sử
                 masterCoupon = await _context.Coupons.FirstOrDefaultAsync(c => c.Code == userCoupon.Code);
             }
         }
@@ -127,7 +127,7 @@ public class OrderController : Controller
                     ShippingFee = shippingFee,
                     DiscountAmount = groupDiscount, // Lưu số tiền được giảm
                     
-                    // [QUAN TRỌNG] Tổng tiền phải trả = (Tiền hàng + Ship) - Tiền giảm
+                    // Tổng tiền phải trả = (Tiền hàng + Ship) - Tiền giảm
                     TotalAmount = (groupSubtotal + shippingFee) - groupDiscount, 
                     
                     Status = "Pending",

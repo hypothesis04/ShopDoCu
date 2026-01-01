@@ -292,7 +292,8 @@ public partial class ChoBanDoCuContext : DbContext
                 .HasConstraintName("FK_CouponUsage_User");
 
             // Liên kết đến Order (nếu coupon áp dụng cho order cụ thể)
-            entity.HasOne(d => d.Order).WithMany()
+            entity.HasOne(d => d.Order)
+                .WithMany(p => p.CouponUsages) 
                 .HasForeignKey(d => d.OrderId)
                 .HasConstraintName("FK_CouponUsage_Order");
 

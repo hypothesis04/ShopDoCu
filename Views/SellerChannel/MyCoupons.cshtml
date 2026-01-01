@@ -1,0 +1,39 @@
+@model IEnumerable<ShopDoCu.Models.Coupon>
+@{ ViewData["Title"] = "Mã giảm giá của Shop"; Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+<div class="container my-4">
+    <div class="d-flex justify-content-between mb-3">
+        <h4 class="fw-bold">🎫 Mã giảm giá của tôi</h4>
+        <a asp-action="CreateCoupon" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Tạo mã mới</a>
+    </div>
+    @if(TempData["SuccessMessage"] != null) { <div class="alert alert-success">@TempData["SuccessMessage"]</div> }
+
+    <div class="card shadow-sm border-0">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="bg-light">
+                <tr>
+                    <th>Mã Code</th>
+                    <th>Giảm giá</th>
+                    <th>Số lượng</th>
+                    <th>Hạn dùng</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model) {
+                <tr>
+                    <td class="fw-bold text-danger">@item.Code</td>
+                    <td>@(item.DiscountType == "Percent" ? item.DiscountValue + "%" : item.DiscountValue.ToString("N0") + "đ")</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.EndDate.ToString("dd/MM/yyyy")</td>
+                    <td>@(item.IsActive ? "Đang chạy" : "Tắt")</td>
+                    <td>
+                        <a asp-action="DeleteCoupon" asp-route-id="@item.CouponId" class="text-danger" onclick="return confirm('Xóa mã này?')"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

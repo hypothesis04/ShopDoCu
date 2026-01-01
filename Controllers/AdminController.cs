@@ -557,9 +557,12 @@ public class AdminController : Controller
 
         if (ModelState.IsValid)
         {
+            coupon.SellerId = null; // Quan trọng: Null nghĩa là mã của Admin/Sàn
+            coupon.IsActive = true;
+            
             _context.Coupons.Add(coupon);
             await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Tạo mã giảm giá thành công!";
+            TempData["SuccessMessage"] = "Tạo mã giảm giá sàn thành công!";
             return RedirectToAction(nameof(Coupons));
         }
         return View(coupon);

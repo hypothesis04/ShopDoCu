@@ -47,6 +47,9 @@
             <a href="/SellerChannel/MyProducts" class="list-group-item list-group-item-action py-3 @(action == "MyProducts" || action == "CreateProduct" || action == "EditProduct" ? "bg-light fw-bold text-primary border-start border-4 border-primary" : "text-secondary")">
                 <i class="bi bi-box-seam me-2 fs-6"></i> Quản lý sản phẩm
             </a>
+            <a href="/SellerChannel/MyCoupons" class="list-group-item list-group-item-action py-3 @(Context.Request.Path.ToString().Contains("Coupons") ? "active" : "")">
+                <i class="bi bi-ticket-perforated me-2"></i>Mã giảm giá
+            </a>
             <a href="/SellerChannel/MyWallet" class="list-group-item list-group-item-action py-3 @(action == "MyWallet" ? "bg-light fw-bold text-primary border-start border-4 border-primary" : "text-secondary")">
                 <i class="bi bi-wallet2 me-2 fs-6"></i> Ví tiền & Doanh thu
             </a>

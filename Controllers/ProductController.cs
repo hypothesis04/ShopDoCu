@@ -130,6 +130,17 @@ public class ProductController : Controller
                                 && od.Order.UserId == userId 
                                 && od.Order.Status == "Completed");
         }
+        // Điều kiện: Của đúng shop này + Đang kích hoạt + Còn số lượng + Chưa hết hạn
+        var shopCoupons = await _context.Coupons
+            .Where(c => c.SellerId == product.SellerId 
+                        && c.IsActive == true 
+                        && c.Quantity > 0 
+                        && c.EndDate >= DateTime.Now)
+            .ToListAsync();
+        
+        ViewBag.ShopCoupons = shopCoupons; // Truyền sang View
+    
+   
         
         // Truyền biến này sang View để ẩn/hiện form
         ViewBag.CanReview = canReview;

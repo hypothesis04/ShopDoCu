@@ -79,6 +79,8 @@ namespace ShopDoCu.Models
 
         // Navigation: Chi tiết đơn hàng
         public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+        // Thêm dòng này vào cuối file Order.cs
+        public virtual ICollection<CouponUsage> CouponUsages { get; set; } = new List<CouponUsage>();
 
         // Navigation: Buyer (User)
         public virtual User? User { get; set; }

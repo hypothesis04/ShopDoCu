@@ -31,6 +31,7 @@ public class OrderController : Controller
         // 2. Tính tổng tiền
         decimal totalAmount = cartItems.Sum(c => (c.Quantity ?? 0) * (c.Product?.Price ?? 0));
 
+
         // 3. Lấy User
         var user = await _context.Users.FindAsync(userId);
 
@@ -60,9 +61,10 @@ public class OrderController : Controller
         
         if (!cartItems.Any()) return RedirectToAction("Index", "Cart");
 
-        // 1. Xử lý Coupon (Dùng Model chuẩn)
+        // 1. Xử lý Coupon & Tìm Coupon Gốc (Master)
         UserCoupon userCoupon = null;
-        decimal couponDiscount = 0;
+        Coupon masterCoupon = null;
+        decimal globalDiscount = 0;
         
         if (selectedCouponId.HasValue)
         {
@@ -71,50 +73,63 @@ public class OrderController : Controller
             
             if (userCoupon != null)
             {
-                couponDiscount = userCoupon.DiscountAmount;
+                globalDiscount = userCoupon.DiscountAmount;
+                // [QUAN TRỌNG] Tìm Coupon gốc để lấy ID lưu vào lịch sử
+                masterCoupon = await _context.Coupons.FirstOrDefaultAsync(c => c.Code == userCoupon.Code);
             }
         }
 
-        // 2. Transaction
+        // Tính tổng tiền toàn bộ giỏ (để chia tỷ lệ giảm giá)
+        decimal totalCartValue = cartItems.Sum(x => (x.Product?.Price ?? 0) * (x.Quantity ?? 0));
+
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
-            // Tính tổng (xử lý null an toàn)
-            decimal totalAmount = cartItems.Sum(x => (x.Product?.Price ?? 0) * (x.Quantity ?? 0));
-            
-            totalAmount -= couponDiscount;
-            if (totalAmount < 0) totalAmount = 0;
+            // Tạo Transaction Group (Tổng giao dịch)
+            decimal transactionTotal = totalCartValue - globalDiscount;
+            if (transactionTotal < 0) transactionTotal = 0;
 
-            // Tạo TransactionGroup
             var transactionGroup = new TransactionGroup
             {
                 UserId = userId,
                 CreatedAt = DateTime.Now,
-                TotalAmount = totalAmount,
+                TotalAmount = transactionTotal,
                 PaymentMethod = PaymentMethod,
                 PaymentStatus = "Unpaid"
             };
             _context.TransactionGroups.Add(transactionGroup);
             await _context.SaveChangesAsync();
 
-            // Nhóm theo Seller
+            // Nhóm theo Seller để tạo các đơn hàng con
             var groupBySeller = cartItems.GroupBy(x => x.Product?.SellerId ?? 0);
             
             foreach (var sellerGroup in groupBySeller)
             {
                 if (sellerGroup.Key == 0) continue;
 
-                decimal orderSubtotal = sellerGroup.Sum(x => (x.Product?.Price ?? 0) * (x.Quantity ?? 0));
+                decimal groupSubtotal = sellerGroup.Sum(x => (x.Product?.Price ?? 0) * (x.Quantity ?? 0));
                 decimal shippingFee = 30000;
+
+                // [LOGIC MỚI] CHIA TỶ LỆ TIỀN GIẢM GIÁ CHO ĐƠN HÀNG NÀY
+                decimal groupDiscount = 0;
+                if (totalCartValue > 0 && globalDiscount > 0)
+                {
+                    // Công thức: Tiền giảm = Tổng giảm * (Tiền hàng shop này / Tổng tiền giỏ)
+                    groupDiscount = globalDiscount * (groupSubtotal / totalCartValue);
+                }
 
                 var order = new Order
                 {
                     TransactionGroupId = transactionGroup.TransactionGroupId,
                     SellerId = sellerGroup.Key,
                     UserId = userId,
-                    Subtotal = orderSubtotal,
+                    Subtotal = groupSubtotal,
                     ShippingFee = shippingFee,
-                    TotalAmount = orderSubtotal + shippingFee, 
+                    DiscountAmount = groupDiscount, // Lưu số tiền được giảm
+                    
+                    // [QUAN TRỌNG] Tổng tiền phải trả = (Tiền hàng + Ship) - Tiền giảm
+                    TotalAmount = (groupSubtotal + shippingFee) - groupDiscount, 
+                    
                     Status = "Pending",
                     PaymentMethod = PaymentMethod,
                     PaymentStatus = "Unpaid",
@@ -123,9 +138,14 @@ public class OrderController : Controller
                     ReceiverPhone = orderInfo.ReceiverPhone,
                     OrderDate = DateTime.Now
                 };
-                _context.Orders.Add(order);
-                await _context.SaveChangesAsync();
+                
+                // Đảm bảo không âm tiền
+                if (order.TotalAmount < 0) order.TotalAmount = 0;
 
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync(); // Lưu để lấy OrderId
+
+                // Lưu chi tiết sản phẩm
                 foreach (var item in sellerGroup)
                 {
                     var orderDetail = new OrderDetail
@@ -140,19 +160,28 @@ public class OrderController : Controller
                     if (item.Product != null)
                     {
                         item.Product.Quantity -= (item.Quantity ?? 0);
-                        if (item.Product.Quantity < 0) throw new Exception($"Sản phẩm {item.Product.ProductName} hết hàng!");
                     }
+                }
+
+                // [MỚI] LƯU LỊCH SỬ DÙNG COUPON (VÀO DATABASE)
+                if (groupDiscount > 0 && masterCoupon != null)
+                {
+                    var usage = new CouponUsage
+                    {
+                        CouponId = masterCoupon.CouponId, // ID của Coupon gốc
+                        UserId = userId,
+                        OrderId = order.OrderId,          // Gắn vào đơn hàng này
+                        AppliedAmount = groupDiscount,    // Số tiền giảm thực tế cho đơn này
+                        UsedAt = DateTime.Now,
+                        Note = "Khách dùng mã từ ví UserCoupon"
+                    };
+                    _context.CouponUsages.Add(usage);
                 }
             }
 
-            // Xóa Cart
+            // Dọn dẹp
             _context.Carts.RemoveRange(cartItems);
-
-            // Xóa Coupon đã dùng
-            if (userCoupon != null)
-            {
-                _context.UserCoupons.Remove(userCoupon);
-            }
+            if (userCoupon != null) _context.UserCoupons.Remove(userCoupon); // Xóa mã khỏi ví khách
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
@@ -194,6 +223,7 @@ public class OrderController : Controller
         var userId = HttpContext.Session.GetInt32("UserId");
 
         var order = await _context.Orders
+            .Include(o => o.CouponUsages).ThenInclude(cu => cu.Coupon) 
             .Include(o => o.OrderDetails)
             .ThenInclude(od => od.Product)
             .ThenInclude(p => p.ProductImages)

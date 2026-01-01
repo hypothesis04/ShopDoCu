@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopDoCu.Models;
 
@@ -11,9 +12,11 @@ using ShopDoCu.Models;
 namespace ShopDoCu.Migrations
 {
     [DbContext(typeof(ChoBanDoCuContext))]
-    partial class ChoBanDoCuContextModelSnapshot : ModelSnapshot
+    [Migration("20260101082053_AddCouponUsageTable")]
+    partial class AddCouponUsageTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,7 +84,7 @@ namespace ShopDoCu.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("ShopDoCu.Models.Coupon", b =>
@@ -220,7 +223,7 @@ namespace ShopDoCu.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Messages", (string)null);
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("ShopDoCu.Models.Order", b =>
@@ -405,7 +408,7 @@ namespace ShopDoCu.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("ShopDoCu.Models.ProductImage", b =>
@@ -433,7 +436,7 @@ namespace ShopDoCu.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages", (string)null);
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("ShopDoCu.Models.ProductTag", b =>
@@ -456,7 +459,7 @@ namespace ShopDoCu.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductTags", (string)null);
+                    b.ToTable("ProductTags");
                 });
 
             modelBuilder.Entity("ShopDoCu.Models.Review", b =>
@@ -498,7 +501,7 @@ namespace ShopDoCu.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("ShopDoCu.Models.TransactionGroup", b =>
@@ -606,7 +609,7 @@ namespace ShopDoCu.Migrations
                     b.HasIndex(new[] { "UserName" }, "UQ__Users__C9F284561243F835")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("ShopDoCu.Models.UserCoupon", b =>
@@ -632,7 +635,7 @@ namespace ShopDoCu.Migrations
 
                     b.HasKey("UserCouponId");
 
-                    b.ToTable("UserCoupons", (string)null);
+                    b.ToTable("UserCoupons");
                 });
 
             modelBuilder.Entity("ShopDoCu.Models.Cart", b =>

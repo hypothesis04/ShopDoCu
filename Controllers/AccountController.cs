@@ -123,7 +123,29 @@ public class AccountController : Controller
         await _context.SaveChangesAsync();
 
         SignIn(newUser);
+        string giftCode = "CHAOBANMOI"; // Tên mã bạn vừa tạo ở Admin
+    
+        // 1. Tìm thông tin mã gốc để lấy giá trị
+        var masterCoupon = await _context.Coupons.FirstOrDefaultAsync(c => c.Code == giftCode);
 
+        if (masterCoupon != null)
+        {
+            // 2. Tạo một bản sao nhét vào ví người dùng (UserCoupons)
+            var userGift = new UserCoupon
+            {
+                UserId = newUser.UserId,      // Của user vừa đăng ký
+                Code = masterCoupon.Code,     // Mã code
+                DiscountAmount = masterCoupon.DiscountValue, // Giá trị 100k
+                IsActive = true
+            };
+
+            _context.UserCoupons.Add(userGift);
+            
+            // (Tùy chọn) Trừ số lượng mã gốc đi 1
+            masterCoupon.Quantity -= 1;
+
+            await _context.SaveChangesAsync(); // Lưu quà vào DB
+        }
         return RedirectToAction("Index", "Home");
     }
 

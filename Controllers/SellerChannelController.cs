@@ -447,4 +447,103 @@ public class SellerChannelController : Controller
             return Json(new { success = false, message = "Lỗi: " + ex.Message });
         }
     }
+    // --- QUẢN LÝ MÃ GIẢM GIÁ CỦA SHOP --- 
+    // 1. Danh sách mã của Shop
+    public async Task<IActionResult> MyCoupons()
+    {
+        if (!IsSeller()) return RedirectToAction("Login", "Account");
+        var userId = HttpContext.Session.GetInt32("UserId");
+
+        var coupons = await _context.Coupons
+            .Where(c => c.SellerId == userId) // Chỉ lấy mã của shop mình
+            .OrderByDescending(c => c.CouponId)
+            .ToListAsync();
+        return View(coupons);
+    }
+
+    // 2. Tạo mã mới (GET)
+    public IActionResult CreateCoupon() => View();
+
+    // 3. Tạo mã mới (POST)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateCoupon(Coupon coupon)
+    {
+        if (!IsSeller()) return RedirectToAction("Login", "Account");
+        var userId = HttpContext.Session.GetInt32("UserId");
+
+        if (await _context.Coupons.AnyAsync(c => c.Code == coupon.Code))
+        {
+            ModelState.AddModelError("Code", "Mã này đã tồn tại trên hệ thống!");
+            return View(coupon);
+        }
+
+        if (ModelState.IsValid)
+        {
+            coupon.SellerId = userId; // Gán mã này là của Shop
+            coupon.IsActive = true;
+            _context.Coupons.Add(coupon);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Tạo mã thành công!";
+            return RedirectToAction(nameof(MyCoupons));
+        }
+        return View(coupon);
+    }
+    // 5. Sửa mã (GET)
+    public async Task<IActionResult> EditCoupon(int id)
+    {
+        if (!IsSeller()) return RedirectToAction("Login", "Account");
+        var userId = HttpContext.Session.GetInt32("UserId");
+
+        // Chỉ tìm mã của chính Seller này (tránh sửa trộm của người khác)
+        var coupon = await _context.Coupons.FirstOrDefaultAsync(c => c.CouponId == id && c.SellerId == userId);
+        
+        if (coupon == null) return NotFound();
+        return View(coupon);
+    }
+
+    // 6. Sửa mã (POST)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditCoupon(int id, Coupon coupon)
+    {
+        if (!IsSeller()) return RedirectToAction("Login", "Account");
+        var userId = HttpContext.Session.GetInt32("UserId");
+
+        // Tìm coupon gốc trong DB
+        var couponInDb = await _context.Coupons.FirstOrDefaultAsync(c => c.CouponId == id && c.SellerId == userId);
+        
+        if (couponInDb == null) return NotFound();
+
+        // Cập nhật thông tin (Giữ nguyên Mã Code và Loại giảm để tránh lỗi đơn hàng cũ)
+        couponInDb.Quantity = coupon.Quantity;
+        couponInDb.EndDate = coupon.EndDate;
+        couponInDb.IsActive = coupon.IsActive;
+        couponInDb.MinOrderAmount = coupon.MinOrderAmount;
+        
+        // Riêng Admin thì sửa gì cũng được, nhưng Seller thì hạn chế sửa giá trị tiền
+        // Ở đây mình cho sửa cả giá trị giảm cho tiện (tùy bạn quyết định)
+        couponInDb.DiscountValue = coupon.DiscountValue;
+        couponInDb.DiscountType = coupon.DiscountType;
+
+        await _context.SaveChangesAsync();
+        TempData["SuccessMessage"] = "Cập nhật mã thành công!";
+        
+        return RedirectToAction(nameof(MyCoupons));
+    }
+    // 4. Xóa mã
+    public async Task<IActionResult> DeleteCoupon(int id)
+    {
+        if (!IsSeller()) return RedirectToAction("Login", "Account");
+        var userId = HttpContext.Session.GetInt32("UserId");
+        var coupon = await _context.Coupons.FirstOrDefaultAsync(c => c.CouponId == id && c.SellerId == userId);
+        
+        if (coupon != null)
+        {
+            _context.Coupons.Remove(coupon);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Đã xóa mã!";
+        }
+        return RedirectToAction(nameof(MyCoupons));
+    }
 }

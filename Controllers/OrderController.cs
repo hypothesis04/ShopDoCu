@@ -14,116 +14,161 @@ public class OrderController : Controller
     }
 
     // --- 1. TRANG THANH TOÁN ---
-    [HttpGet]
-    // GET: /Order/Checkout
-    public async Task<IActionResult> Checkout()
+   [HttpGet]
+    public async Task<IActionResult> Checkout(List<int> selectedIds)
     {
-        // 1. Load danh mục (để menu không lỗi)
         ViewBag.Categories = await _context.Categories.Where(c => c.ParentId == null).ToListAsync();
 
         var userId = HttpContext.Session.GetInt32("UserId");
         if (userId == null) return RedirectToAction("Login", "Account", new { returnUrl = "/Order/Checkout" });
 
-        // 2. Lấy giỏ hàng
-        var cartItems = await _context.Carts.Include(c => c.Product).Where(c => c.UserId == userId).ToListAsync();
+        // 1. Lấy sản phẩm được chọn
+        var cartItems = await _context.Carts.Include(c => c.Product)
+            .Where(c => c.UserId == userId && selectedIds.Contains(c.CartId)).ToListAsync();
+        
         if (!cartItems.Any()) return RedirectToAction("Index", "Cart");
-        
-        // 3. Tính tổng tiền
-        // Lưu ý: Dùng (c.Quantity ?? 0) để tránh lỗi nếu null
-        decimal totalAmount = cartItems.Sum(c => (c.Quantity ?? 0) * c.Product.Price);
-        // 4. Lấy thông tin User để điền sẵn vào form
-        var user = await _context.Users.FindAsync(userId);
-        
-        ViewBag.CartItems = cartItems;
-        ViewBag.TotalAmount = totalAmount; // Gửi tổng tiền sang View (để hiển thị)
-        ViewBag.User = user; // Gửi user sang View (để điền form)
 
-        // Gửi tổng tiền để check > 20tr
+        // 2. Tính tổng tiền
+        decimal totalAmount = cartItems.Sum(c => (c.Quantity ?? 0) * (c.Product?.Price ?? 0));
+
+        // 3. Lấy User
+        var user = await _context.Users.FindAsync(userId);
+
+        // 4. Lấy Coupon (DÙNG MODEL CHUẨN)
+        // Lưu ý: Nếu báo lỗi ở dòng này nghĩa là bạn chưa làm bước 2 (thêm DbSet vào Context)
+        var userCoupons = await _context.UserCoupons
+            .Where(u => u.UserId == userId && u.IsActive)
+            .ToListAsync();
+        
+        ViewBag.UserCoupons = userCoupons;
+        ViewBag.CartItems = cartItems;
+        ViewBag.TotalAmount = totalAmount;
+
         return View(user);
     }
-    // POST: /Order/Checkout
+
+    // --- 2. XỬ LÝ THANH TOÁN (POST) ---
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Checkout(Order orderInfo, string PaymentMethod, string CouponCode) // Thêm tham số CouponCode
+    public async Task<IActionResult> Checkout(List<int> selectedIds, Order orderInfo, string PaymentMethod, int? selectedCouponId)
     {
         var userId = HttpContext.Session.GetInt32("UserId");
         if (userId == null) return RedirectToAction("Login", "Account");
 
-        // 1. Lấy giỏ hàng
-        var cartItems = await _context.Carts.Include(c => c.Product).Where(c => c.UserId == userId).ToListAsync();
+        var cartItems = await _context.Carts.Include(c => c.Product)
+            .Where(c => c.UserId == userId && selectedIds.Contains(c.CartId)).ToListAsync();
+        
         if (!cartItems.Any()) return RedirectToAction("Index", "Cart");
 
-        decimal totalAmount = cartItems.Sum(c => (c.Quantity ?? 0) * c.Product.Price);
-        decimal discountAmount = 0; // Mặc định giảm 0đ
-
-        // --- LOGIC XỬ LÝ MÃ GIẢM GIÁ (SERVER SIDE) ---
-        if (!string.IsNullOrEmpty(CouponCode))
+        // 1. Xử lý Coupon (Dùng Model chuẩn)
+        UserCoupon userCoupon = null;
+        decimal couponDiscount = 0;
+        
+        if (selectedCouponId.HasValue)
         {
-            var coupon = await _context.Coupons.FirstOrDefaultAsync(c => c.Code == CouponCode && c.IsActive);
+            userCoupon = await _context.UserCoupons
+                .FirstOrDefaultAsync(u => u.UserCouponId == selectedCouponId.Value && u.UserId == userId);
             
-            // Kiểm tra lại các điều kiện cho chắc chắn
-            if (coupon != null && coupon.Quantity > 0 && 
-                DateTime.Now >= coupon.StartDate && DateTime.Now <= coupon.EndDate &&
-                totalAmount >= coupon.MinOrderAmount)
+            if (userCoupon != null)
             {
-                // Tính toán giảm giá
-                if (coupon.DiscountType == "Percent")
-                    discountAmount = totalAmount * (coupon.DiscountValue / 100);
-                else
-                    discountAmount = coupon.DiscountValue;
-
-                if (discountAmount > totalAmount) discountAmount = totalAmount;
-
-                // Trừ số lượng mã đi 1
-                coupon.Quantity -= 1;
+                couponDiscount = userCoupon.DiscountAmount;
             }
         }
-        // ---------------------------------------------
 
-        // 2. Tạo đơn hàng
-        var order = new Order
+        // 2. Transaction
+        using var transaction = await _context.Database.BeginTransactionAsync();
+        try
         {
-            UserId = userId,
-            OrderDate = DateTime.Now,
-            TotalAmount = totalAmount - discountAmount, // Lưu số tiền ĐÃ GIẢM
-            DiscountAmount = discountAmount,            // Lưu số tiền được giảm
-            CouponCode = discountAmount > 0 ? CouponCode : null, // Lưu mã (nếu áp dụng thành công)
+            // Tính tổng (xử lý null an toàn)
+            decimal totalAmount = cartItems.Sum(x => (x.Product?.Price ?? 0) * (x.Quantity ?? 0));
             
-            Status = "Pending",
-            PaymentMethod = PaymentMethod,
-            PaymentStatus = (PaymentMethod == "Online") ? "Unpaid" : "Unpaid",
-            ShippingAddress = orderInfo.ShippingAddress,
-            ReceiverName = orderInfo.ReceiverName,
-            ReceiverPhone = orderInfo.ReceiverPhone
-        };
+            totalAmount -= couponDiscount;
+            if (totalAmount < 0) totalAmount = 0;
 
-        _context.Orders.Add(order);
-        await _context.SaveChangesAsync();
-
-        // 3. Lưu chi tiết đơn (Giữ nguyên code cũ) ...
-        foreach (var item in cartItems)
-        {
-            var orderDetail = new OrderDetail
+            // Tạo TransactionGroup
+            var transactionGroup = new TransactionGroup
             {
-                OrderId = order.OrderId,
-                ProductId = item.ProductId,
-                Quantity = item.Quantity,
-                UnitPrice = item.Product.Price
+                UserId = userId,
+                CreatedAt = DateTime.Now,
+                TotalAmount = totalAmount,
+                PaymentMethod = PaymentMethod,
+                PaymentStatus = "Unpaid"
             };
-            _context.OrderDetails.Add(orderDetail);
+            _context.TransactionGroups.Add(transactionGroup);
+            await _context.SaveChangesAsync();
+
+            // Nhóm theo Seller
+            var groupBySeller = cartItems.GroupBy(x => x.Product?.SellerId ?? 0);
             
-            // Trừ kho sản phẩm
-            item.Product.Quantity -= item.Quantity;
+            foreach (var sellerGroup in groupBySeller)
+            {
+                if (sellerGroup.Key == 0) continue;
+
+                decimal orderSubtotal = sellerGroup.Sum(x => (x.Product?.Price ?? 0) * (x.Quantity ?? 0));
+                decimal shippingFee = 30000;
+
+                var order = new Order
+                {
+                    TransactionGroupId = transactionGroup.TransactionGroupId,
+                    SellerId = sellerGroup.Key,
+                    UserId = userId,
+                    Subtotal = orderSubtotal,
+                    ShippingFee = shippingFee,
+                    TotalAmount = orderSubtotal + shippingFee, 
+                    Status = "Pending",
+                    PaymentMethod = PaymentMethod,
+                    PaymentStatus = "Unpaid",
+                    ShippingAddress = orderInfo.ShippingAddress,
+                    ReceiverName = orderInfo.ReceiverName,
+                    ReceiverPhone = orderInfo.ReceiverPhone,
+                    OrderDate = DateTime.Now
+                };
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
+
+                foreach (var item in sellerGroup)
+                {
+                    var orderDetail = new OrderDetail
+                    {
+                        OrderId = order.OrderId,
+                        ProductId = item.ProductId,
+                        Quantity = item.Quantity ?? 0,
+                        UnitPrice = item.Product?.Price ?? 0
+                    };
+                    _context.OrderDetails.Add(orderDetail);
+                    
+                    if (item.Product != null)
+                    {
+                        item.Product.Quantity -= (item.Quantity ?? 0);
+                        if (item.Product.Quantity < 0) throw new Exception($"Sản phẩm {item.Product.ProductName} hết hàng!");
+                    }
+                }
+            }
+
+            // Xóa Cart
+            _context.Carts.RemoveRange(cartItems);
+
+            // Xóa Coupon đã dùng
+            if (userCoupon != null)
+            {
+                _context.UserCoupons.Remove(userCoupon);
+            }
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            TempData["SuccessMessage"] = "Đặt hàng thành công!";
+            return RedirectToAction("OrderSuccess", new { id = transactionGroup.TransactionGroupId });
         }
-
-        _context.Carts.RemoveRange(cartItems);
-        await _context.SaveChangesAsync();
-
-        TempData["SuccessMessage"] = "Đặt hàng thành công! Mã đơn: #" + order.OrderId;
-        return RedirectToAction("Index", "Home");
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            TempData["Error"] = "Lỗi: " + ex.Message;
+            return RedirectToAction("Checkout", new { selectedIds });
+        }
     }
     // --- 2. THÔNG BÁO & LỊCH SỬ ---
-    public IActionResult OrderSuccess(int id)
+    public IActionResult OrderSuccess(Guid id)
     {
         ViewBag.Categories = _context.Categories.Where(c => c.ParentId == null).ToList();
         return View(id);

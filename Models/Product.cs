@@ -27,6 +27,9 @@ public partial class Product
 
     public string? Status { get; set; }
 
+    // Thông số kỹ thuật động, lưu dạng chuỗi JSON: [{"Key": "RAM", "Value": "8GB"}, ...]
+    public string? Specifications { get; set; }
+
     // Địa điểm bán cụ thể (có thể khác với địa chỉ của Seller, ví dụ: "Quận 1, TP.HCM")
     public string? Location { get; set; }
 

@@ -39,6 +39,8 @@ public class ProductCreateViewModel
     [StringLength(255, ErrorMessage = "Địa điểm tối đa 255 ký tự")]
     [Display(Name = "Địa điểm bán")]
     public string? Location { get; set; }
+    [Display(Name = "Thông số kỹ thuật")]
+    public string? Specifications { get; set; }
 
     // Ảnh sản phẩm sẽ được lấy từ Request.Form.Files trong Controller, không cần trong ViewModel
     // Chỉ dùng để validation message

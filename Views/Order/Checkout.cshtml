@@ -3,108 +3,127 @@
     ViewData["Title"] = "Thanh toán";
     var cartItems = ViewBag.CartItems as List<ShopDoCu.Models.Cart>;
     var totalAmount = (decimal)ViewBag.TotalAmount;
+    var myCoupons = ViewBag.UserCoupons as List<ShopDoCu.Models.UserCoupon>;
+    
+    // Logic ràng buộc 20 triệu
     bool isOverLimit = totalAmount > 20000000;
 }
 
+<style>
+    .payment-option-label { cursor: pointer; transition: 0.2s; border: 2px solid transparent; }
+    .payment-option-input:checked + .payment-option-label { border-color: #0d6efd; background-color: #f0f7ff; }
+    .payment-disabled { opacity: 0.5; pointer-events: none; background-color: #f8f9fa; }
+</style>
+
 <div class="container my-5">
-    <div class="d-flex align-items-center mb-4">
-        <h3 class="fw-bold text-primary mb-0"><i class="bi bi-credit-card-2-front me-2"></i>Thanh toán</h3>
-        <span class="mx-3 text-muted">|</span>
-        <span class="text-muted">Hoàn tất đơn hàng của bạn</span>
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-primary">Xác nhận đơn hàng</h2>
     </div>
 
     <form asp-action="Checkout" method="post" id="checkoutForm">
-        <input type="hidden" name="CouponCode" id="hiddenCouponCode" value="" />
+        @foreach(var item in cartItems) { <input type="hidden" name="selectedIds" value="@item.CartId" /> }
 
         <div class="row g-4">
             <div class="col-lg-7">
-                <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-header bg-white py-3">
-                        <h6 class="mb-0 fw-bold text-uppercase text-primary"><i class="bi bi-geo-alt-fill me-2"></i>1. Thông tin người nhận</h6>
-                    </div>
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-header bg-white py-3"><h5 class="fw-bold m-0">Thông tin nhận hàng</h5></div>
                     <div class="card-body p-4">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold small text-muted">Họ và tên</label>
-                                <input type="text" name="receiverName" class="form-control" value="@(Model.FullName ?? Model.UserName)" required>
+                                <label class="form-label fw-bold small text-secondary">Họ tên người nhận</label>
+                                <input type="text" name="receiverName" class="form-control" value="@(Model.FullName ?? Model.UserName)" required placeholder="Nhập họ tên...">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold small text-muted">Số điện thoại</label>
-                                <input type="text" name="receiverPhone" class="form-control" value="@Model.Phone" required>
+                                <label class="form-label fw-bold small text-secondary">Số điện thoại</label>
+                                <input type="text" name="receiverPhone" class="form-control" value="@Model.Phone" required placeholder="Nhập số điện thoại...">
                             </div>
                             <div class="col-12">
-                                <label class="form-label fw-bold small text-muted">Địa chỉ nhận hàng</label>
-                                <input type="text" name="shippingAddress" class="form-control" value="@Model.Address" placeholder="Số nhà, đường, phường, quận..." required>
+                                <label class="form-label fw-bold small text-secondary">Địa chỉ giao hàng</label>
+                                <input type="text" name="shippingAddress" class="form-control" value="@Model.Address" required placeholder="Số nhà, đường, phường, quận...">
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-white py-3">
-                        <h6 class="mb-0 fw-bold text-uppercase text-primary"><i class="bi bi-wallet2 me-2"></i>2. Hình thức thanh toán</h6>
-                    </div>
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-header bg-white py-3"><h5 class="fw-bold m-0">Thanh toán</h5></div>
                     <div class="card-body p-4">
+                        
                         @if (isOverLimit)
                         {
-                            <div class="alert alert-warning d-flex align-items-center mb-3">
-                                <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
-                                <div><strong>Lưu ý:</strong> Đơn hàng > 20 triệu phải thanh toán chuyển khoản.</div>
+                            <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center mb-4">
+                                <i class="bi bi-exclamation-triangle-fill fs-3 me-3 text-warning"></i>
+                                <div>
+                                    <strong class="text-dark">Lưu ý quan trọng:</strong><br>
+                                    Đơn hàng của bạn trên <strong>20.000.000₫</strong>. Theo quy định, bạn bắt buộc phải thanh toán bằng <strong>Chuyển khoản</strong>.
+                                </div>
                             </div>
                         }
 
-                        <div class="form-check p-3 border rounded mb-2 @(isOverLimit ? "bg-light text-muted" : "bg-white")">
-                            <input class="form-check-input mt-1" type="radio" name="paymentMethod" id="paymentCOD" value="COD" @(isOverLimit ? "disabled" : "checked")>
-                            <label class="form-check-label w-100 cursor-pointer" for="paymentCOD">
-                                <span class="fw-bold"><i class="bi bi-cash-stack me-2 text-success"></i>COD (Tiền mặt)</span>
-                            </label>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <input class="form-check-input d-none payment-option-input" type="radio" name="paymentMethod" id="cod" value="COD" 
+                                       @(isOverLimit ? "disabled" : "checked")>
+                                
+                                <label class="payment-option-label card p-3 h-100 shadow-sm rounded-3 @(isOverLimit ? "payment-disabled" : "")" for="cod">
+                                    <div class="fw-bold text-success"><i class="bi bi-cash-coin me-2"></i>Tiền mặt (COD)</div>
+                                    @if(isOverLimit) { <small class="text-danger d-block mt-1">(Không khả dụng)</small> }
+                                </label>
+                            </div>
+
+                            <div class="col-md-6">
+                                <input class="form-check-input d-none payment-option-input" type="radio" name="paymentMethod" id="online" value="Online"
+                                       @(isOverLimit ? "checked" : "")>
+                                
+                                <label class="payment-option-label card p-3 h-100 shadow-sm rounded-3" for="online">
+                                    <div class="fw-bold text-primary"><i class="bi bi-bank me-2"></i>Chuyển khoản</div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                         <div id="onlineBox" class="mt-4 p-4 bg-primary bg-opacity-10 rounded-4 text-center border border-primary border-dashed" style="display: none;">
+                            <h6 class="fw-bold text-primary mb-3">Quét mã QR để thanh toán</h6>
+                            <div class="bg-white p-2 d-inline-block rounded shadow-sm">
+                                <i class="bi bi-qr-code-scan" style="font-size: 5rem; color: #333;"></i>
+                            </div>
+                            <div class="mt-3 small text-muted">
+                                Nội dung CK: <strong class="text-dark">[Tên] - [SĐT]</strong>
+                            </div>
                         </div>
 
-                        <div class="form-check p-3 border rounded mb-2 bg-white">
-                            <input class="form-check-input mt-1" type="radio" name="paymentMethod" id="paymentOnline" value="Online" @(isOverLimit ? "checked" : "")>
-                            <label class="form-check-label w-100 cursor-pointer" for="paymentOnline">
-                                <span class="fw-bold"><i class="bi bi-bank me-2 text-primary"></i>Chuyển khoản / QR Code</span>
-                            </label>
-                        </div>
-
-                        <div id="onlineBox" class="mt-3 p-4 bg-light rounded text-center border border-primary border-opacity-25" style="display: none;">
-                            <h6 class="fw-bold text-primary">Quét mã để thanh toán</h6>
-                            <i class="bi bi-qr-code-scan" style="font-size: 3rem;"></i>
-                            <div class="mt-2 small text-muted">Nội dung: <strong>[Tên] - [SĐT]</strong></div>
-                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="col-lg-5">
-                <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
-                    <div class="card-header bg-white py-3">
-                        <h6 class="mb-0 fw-bold text-uppercase text-primary"><i class="bi bi-bag-check me-2"></i>Đơn hàng</h6>
-                    </div>
+                <div class="card border-0 shadow rounded-4 sticky-top" style="top: 20px;">
+                    <div class="card-header bg-light py-3"><h5 class="fw-bold m-0">Đơn hàng</h5></div>
                     <div class="card-body p-0">
-                        <div class="cart-list overflow-auto" style="max-height: 300px;">
-                            <ul class="list-group list-group-flush">
-                                @foreach (var item in cartItems)
-                                {
-                                    <li class="list-group-item d-flex justify-content-between align-items-center px-4 py-3">
-                                        <div>
-                                            <span class="fw-bold text-dark d-block">@item.Product.ProductName</span>
-                                            <small class="text-muted">x @item.Quantity</small>
-                                        </div>
-                                        <span class="fw-bold">@((item.Product.Price * item.Quantity)?.ToString("N0"))₫</span>
-                                    </li>
-                                }
-                            </ul>
+                        <div class="overflow-auto" style="max-height: 250px;">
+                            @foreach (var item in cartItems)
+                            {
+                                <div class="d-flex justify-content-between p-3 border-bottom">
+                                    <span>@item.Product.ProductName <span class="badge bg-secondary rounded-pill ms-1">x @item.Quantity</span></span>
+                                    <span class="fw-bold">@((item.Product.Price * item.Quantity)?.ToString("N0"))₫</span>
+                                </div>
+                            }
                         </div>
                     </div>
-                    
-                    <div class="p-4 bg-light border-top">
-                        <label class="form-label fw-bold small text-muted">Mã giảm giá</label>
-                        <div class="input-group mb-2">
-                            <input type="text" id="couponInput" class="form-control" placeholder="Nhập mã voucher...">
-                            <button class="btn btn-dark" type="button" id="btnApplyCoupon">Áp dụng</button>
-                        </div>
-                        <div id="couponMessage" class="small"></div>
+
+                    <div class="p-4 bg-light">
+                        <label class="fw-bold mb-2 small text-uppercase text-muted">Mã giảm giá</label>
+                        <select id="couponSelect" name="selectedCouponId" class="form-select border-0 shadow-sm" onchange="updateCheckoutTotal()">
+                            <option value="" data-discount="0">-- Chọn mã ưu đãi --</option>
+                            @if (myCoupons != null)
+                            {
+                                foreach (var coupon in myCoupons)
+                                {
+                                    <option value="@coupon.UserCouponId" data-discount="@coupon.DiscountAmount">
+                                        @coupon.Code (-@coupon.DiscountAmount.ToString("N0")₫)
+                                    </option>
+                                }
+                            }
+                        </select>
                     </div>
 
                     <div class="card-footer bg-white p-4">
@@ -112,20 +131,15 @@
                             <span class="text-muted">Tạm tính</span>
                             <span class="fw-bold">@totalAmount.ToString("N0")₫</span>
                         </div>
-                        
-                        <div class="d-flex justify-content-between mb-2 text-success" id="discountRow" style="display: none;">
-                            <span><i class="bi bi-ticket-perforated-fill me-1"></i>Giảm giá</span>
+                        <div class="d-flex justify-content-between mb-3 text-success" id="discountRow" style="display: none;">
+                            <span>Ưu đãi</span>
                             <span class="fw-bold" id="discountValue">-0₫</span>
                         </div>
-
-                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
-                            <span class="h5 fw-bold mb-0">Tổng cộng</span>
-                            <span class="h4 fw-bold text-danger mb-0" id="finalTotal">@totalAmount.ToString("N0")₫</span>
+                        <div class="d-flex justify-content-between align-items-center mb-4 border-top pt-3">
+                            <span class="h5 fw-bold m-0">Tổng cộng</span>
+                            <span class="h3 fw-bold text-danger m-0" id="finalTotal">@totalAmount.ToString("N0")₫</span>
                         </div>
-                        
-                        <button type="submit" class="btn btn-primary w-100 py-3 mt-3 fw-bold text-uppercase shadow-sm">
-                            Xác nhận đặt hàng
-                        </button>
+                        <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow">ĐẶT HÀNG</button>
                     </div>
                 </div>
             </div>
@@ -135,61 +149,31 @@
 
 @section Scripts {
     <script>
+        var originalTotal = @totalAmount;
+        function updateCheckoutTotal() {
+            var discount = $('#couponSelect option:selected').data('discount') || 0;
+            var finalTotal = originalTotal - discount;
+            if(finalTotal < 0) finalTotal = 0;
+
+            if (discount > 0) {
+                $('#discountRow').show();
+                $('#discountValue').text('-' + parseInt(discount).toLocaleString('vi-VN') + '₫');
+            } else {
+                $('#discountRow').hide();
+            }
+            $('#finalTotal').text(finalTotal.toLocaleString('vi-VN') + '₫');
+        }
+
         $(document).ready(function() {
-            // 1. Logic ẩn hiện QR Code
             function toggleOnlineBox() {
-                if ($('input[name="paymentMethod"]:checked').val() === 'Online') {
+                if ($('#online').is(':checked')) {
                     $('#onlineBox').slideDown();
                 } else {
                     $('#onlineBox').slideUp();
                 }
             }
-            toggleOnlineBox();
             $('input[name="paymentMethod"]').change(toggleOnlineBox);
-
-            // 2. LOGIC ÁP DỤNG MÃ GIẢM GIÁ (AJAX)
-            $('#btnApplyCoupon').click(function() {
-                var code = $('#couponInput').val().trim();
-                var currentTotal = @totalAmount; // Lấy giá trị từ Razor ra biến JS
-
-                if (!code) {
-                    $('#couponMessage').html('<span class="text-danger">Vui lòng nhập mã!</span>');
-                    return;
-                }
-
-                // Gửi AJAX lên Controller
-                $.ajax({
-                    url: '/Order/CheckCoupon',
-                    type: 'GET',
-                    data: { code: code, totalAmount: currentTotal },
-                    success: function(res) {
-                        if (res.success) {
-                            // Thành công
-                            $('#couponMessage').html('<span class="text-success"><i class="bi bi-check-circle me-1"></i>' + res.message + '</span>');
-                            
-                            // Hiện dòng giảm giá
-                            $('#discountRow').show();
-                            $('#discountValue').text('-' + res.discountText);
-                            
-                            // Cập nhật tổng tiền mới
-                            $('#finalTotal').text(res.newTotal);
-                            
-                            // Gán mã vào input ẩn để gửi đi khi submit
-                            $('#hiddenCouponCode').val(code);
-                            
-                            // Disable nút nhập để tránh sửa đổi lung tung
-                            $('#couponInput').prop('disabled', true);
-                            $('#btnApplyCoupon').prop('disabled', true).text('Đã dùng');
-                        } else {
-                            // Thất bại
-                            $('#couponMessage').html('<span class="text-danger"><i class="bi bi-x-circle me-1"></i>' + res.message + '</span>');
-                        }
-                    },
-                    error: function() {
-                        alert('Lỗi kết nối server!');
-                    }
-                });
-            });
+            toggleOnlineBox(); // Chạy ngay khi load
         });
     </script>
 }

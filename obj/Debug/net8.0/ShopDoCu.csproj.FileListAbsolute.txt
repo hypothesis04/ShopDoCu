@@ -138,3 +138,4 @@ C:\Users\Truong\Desktop\IT\ShopDoCu\obj\Debug\net8.0\ShopDoCu.pdb
 C:\Users\Truong\Desktop\IT\ShopDoCu\obj\Debug\net8.0\ShopDoCu.genruntimeconfig.cache
 C:\Users\Truong\Desktop\IT\ShopDoCu\obj\Debug\net8.0\ref\ShopDoCu.dll
 C:\Users\Truong\Desktop\IT\ShopDoCu\obj\Debug\net8.0\ShopDoCu.sourcelink.json
+C:\Users\Truong\Desktop\IT\ShopDoCu\bin\Debug\net8.0\Newtonsoft.Json.dll

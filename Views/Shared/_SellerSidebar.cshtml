@@ -1,0 +1,58 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+
+    // 1. Lấy thông tin từ Session
+    var session = HttpContextAccessor.HttpContext?.Session;
+    var shopName = session?.GetString("StoreName") ?? session?.GetString("UserName") ?? "Shop của tôi";
+    var avatarUrl = session?.GetString("AvatarUrl");
+
+    // 2. Nếu không có avatar thì dùng ảnh mặc định online (có chữ cái đầu tên Shop)
+    if (string.IsNullOrEmpty(avatarUrl)) 
+    {
+        var firstLetter = shopName.Substring(0, 1).ToUpper();
+        avatarUrl = $"https://ui-avatars.com/api/?name={firstLetter}&background=random&color=fff&size=100";
+    }
+}
+
+<div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+    <div class="card-body p-0">
+        <div class="bg-primary text-white p-3 mb-2">
+            <div class="d-flex align-items-center gap-3">
+                <img src="@avatarUrl" alt="Avatar" class="rounded-circle border border-2 border-white" 
+                     style="width: 45px; height: 45px; object-fit: cover; background-color: white;">
+                
+                <div class="overflow-hidden">
+                    <h6 class="mb-0 fw-bold text-truncate" style="max-width: 160px;" title="@shopName">
+                        @shopName
+                    </h6>
+                    <small class="opacity-75 d-block">
+                        <i class="bi bi-patch-check-fill me-1"></i>Đã xác thực
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-group list-group-flush small">
+            <a href="/SellerChannel/Index" class="list-group-item list-group-item-action py-3 @(action == "Index" ? "bg-light fw-bold text-primary border-start border-4 border-primary" : "text-secondary")">
+                <i class="bi bi-speedometer2 me-2 fs-6"></i> Tổng quan (Dashboard)
+            </a>
+            <a href="/SellerChannel/ManageOrders" class="list-group-item list-group-item-action py-3 @(action == "ManageOrders" || action == "OrderDetails" ? "bg-light fw-bold text-primary border-start border-4 border-primary" : "text-secondary")">
+                <i class="bi bi-receipt me-2 fs-6"></i> Quản lý đơn hàng
+                @if (ViewBag.CountPending > 0) { <span class="badge bg-danger rounded-pill float-end">@ViewBag.CountPending</span> }
+            </a>
+            <a href="/SellerChannel/MyProducts" class="list-group-item list-group-item-action py-3 @(action == "MyProducts" || action == "CreateProduct" || action == "EditProduct" ? "bg-light fw-bold text-primary border-start border-4 border-primary" : "text-secondary")">
+                <i class="bi bi-box-seam me-2 fs-6"></i> Quản lý sản phẩm
+            </a>
+            <a href="/SellerChannel/MyWallet" class="list-group-item list-group-item-action py-3 @(action == "MyWallet" ? "bg-light fw-bold text-primary border-start border-4 border-primary" : "text-secondary")">
+                <i class="bi bi-wallet2 me-2 fs-6"></i> Ví tiền & Doanh thu
+            </a>
+            <a href="/" class="list-group-item list-group-item-action py-3 text-secondary border-top mt-2">
+                <i class="bi bi-arrow-left me-2 fs-6"></i> Quay về trang mua sắm
+            </a>
+        </div>
+    </div>
+</div>

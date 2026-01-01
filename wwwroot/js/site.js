@@ -36,7 +36,7 @@ $(function () {
         sellerForm.on('submit', function (e) {
             e.preventDefault();
             var form = $(this);
-            
+
             if (!form.valid()) {
                 var firstError = form.find('.is-invalid').first();
                  if (firstError.length) {
@@ -183,3 +183,84 @@ function autoSearch(inputElement) {
         });
     }, 500);
 }
+// --- PHẦN 4: XỬ LÝ FORM ĐĂNG BÁN & SỬA SẢN PHẨM (AJAX) ---
+$(function () {
+    // Áp dụng cho cả 2 form: Tạo mới và Chỉnh sửa
+    var productForm = $('#create-product-form, #edit-product-form');
+
+    if (productForm.length) {
+        productForm.on('submit', function (e) {
+            e.preventDefault(); // 1. Chặn load lại trang
+
+            // --- QUAN TRỌNG: GOM DỮ LIỆU THÔNG SỐ (SPECS) THÀNH JSON ---
+            // Đoạn này thay thế cho code JS rời rạc trong View
+            const specs = [];
+            $('#specifications-list .spec-row').each(function() {
+                const key = $(this).find('input').eq(0).val().trim();
+                const value = $(this).find('input').eq(1).val().trim();
+                if (key && value) specs.push({ Key: key, Value: value });
+            });
+            // Gán vào input ẩn để gửi đi
+            $('#specifications-json').val(specs.length ? JSON.stringify(specs) : '');
+
+            // --- BẮT ĐẦU GỬI AJAX ---
+            var form = $(this);
+            var btn = form.find('button[type="submit"]');
+            var errorDiv = $('#form-error-msg');
+            var containerId = form.attr('id') === 'create-product-form' ? '#create-product-container' : '#edit-product-container';
+
+            // Hiệu ứng loading
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...');
+            errorDiv.addClass('d-none');
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                type: "POST",
+                url: form.attr('action'),
+                data: formData,
+                processData: false, 
+                contentType: false, 
+                success: function (response) {
+                    if (response.success) {
+                        // --- HIỆN DẤU TÍCH XANH ---
+                        var successHtml = `
+                            <div class="card border-0 shadow-sm text-center py-5">
+                                <div class="card-body">
+                                    <div class="mb-4">
+                                        <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);"></i>
+                                    </div>
+                                    <h2 class="fw-bold text-success mb-3">${response.title || "Thành công!"}</h2>
+                                    <p class="text-muted lead mb-4">${response.message}</p>
+                                    
+                                    <div class="d-flex justify-content-center gap-3">
+                                        <a href="/SellerChannel/MyProducts" class="btn btn-outline-primary px-4 py-2">
+                                            <i class="bi bi-box-seam me-2"></i>Quản lý sản phẩm
+                                        </a>
+                                        <a href="/SellerChannel/CreateProduct" class="btn btn-primary px-4 py-2">
+                                            <i class="bi bi-plus-lg me-2"></i>Đăng sản phẩm mới
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <style>@keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }</style>
+                        `;
+                        
+                        // Thay thế giao diện form bằng thông báo
+                        $(containerId).html(successHtml);
+                        document.getElementById(containerId.substring(1)).scrollIntoView({ behavior: 'smooth' });
+
+                    } else {
+                        // Lỗi Server trả về
+                        errorDiv.html('<i class="bi bi-exclamation-triangle-fill me-2"></i>' + response.message).removeClass('d-none');
+                        btn.prop('disabled', false).html('<i class="bi bi-save me-1"></i> Thử lại');
+                    }
+                },
+                error: function () {
+                    errorDiv.html('Lỗi kết nối Server. Vui lòng thử lại.').removeClass('d-none');
+                    btn.prop('disabled', false).html('<i class="bi bi-save me-1"></i> Thử lại');
+                }
+            });
+        });
+    }
+});

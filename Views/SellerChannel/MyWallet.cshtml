@@ -1,0 +1,40 @@
+﻿@model IEnumerable<ShopDoCu.Models.CouponUsage>
+@{
+    ViewData["Title"] = "Ví tiền";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-4">
+    <h3 class="fw-bold">Ví tiền</h3>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body text-center">
+            <h5>Số dư hiện tại</h5>
+            <p class="text-success fs-3">@ViewBag.Balance.ToString("N0")₫</p>
+            <a href="#" class="btn btn-primary">Rút tiền</a>
+        </div>
+    </div>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5>Lịch sử giao dịch</h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Ngày</th>
+                        <th>Số tiền</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var transaction in Model)
+                    {
+                        <tr>
+                            <td>@transaction.UsedAt.ToString("dd/MM/yyyy")</td>
+                            <td>@transaction.AppliedAmount.ToString("N0")₫</td>
+                            <td>@transaction.Note</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

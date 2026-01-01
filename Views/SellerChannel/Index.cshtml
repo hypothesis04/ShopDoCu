@@ -1,0 +1,72 @@
+﻿@{
+    ViewData["Title"] = "Tổng quan Shop";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-4">
+    <div class="row g-4">
+            <h4 class="fw-bold text-dark mb-4">Tổng quan hôm nay</h4>
+            
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%); color: white;">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="mb-1 opacity-75">Tổng doanh thu</p>
+                                    <h3 class="fw-bold mb-0">@ViewBag.TotalRevenue.ToString("N0")₫</h3>
+                                </div>
+                                <div class="bg-white bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="bi bi-currency-dollar fs-3"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100 bg-white">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1">Tổng đơn hàng</p>
+                                    <h3 class="fw-bold text-dark mb-0">@ViewBag.TotalOrders</h3>
+                                </div>
+                                <div class="bg-light text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="bi bi-bag-check fs-3"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100 bg-white">
+                        <div class="card-body p-4 border-start border-4 border-warning">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1">Đơn chờ xác nhận</p>
+                                    <h3 class="fw-bold text-warning mb-0">@ViewBag.PendingOrders</h3>
+                                </div>
+                                <i class="bi bi-hourglass-split fs-1 text-warning opacity-25"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100 bg-white">
+                        <div class="card-body p-4 border-start border-4 border-success">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1">Sản phẩm đã bán</p>
+                                    <h3 class="fw-bold text-success mb-0">@ViewBag.SoldItems</h3>
+                                </div>
+                                <i class="bi bi-box-seam fs-1 text-success opacity-25"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>

@@ -1,47 +1,46 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
 namespace ShopDoCu.Models;
 
 public partial class ChoBanDoCuContext : DbContext
 {
+    // Default ctor
     public ChoBanDoCuContext()
     {
     }
 
+    // Ctor dùng DI
     public ChoBanDoCuContext(DbContextOptions<ChoBanDoCuContext> options)
         : base(options)
     {
     }
 
+    // DbSets cho các bảng hiện có
     public virtual DbSet<Cart> Carts { get; set; }
-
     public virtual DbSet<Category> Categories { get; set; }
-
     public virtual DbSet<Message> Messages { get; set; }
-
     public virtual DbSet<Order> Orders { get; set; }
-
     public virtual DbSet<OrderDetail> OrderDetails { get; set; }
-
     public virtual DbSet<Product> Products { get; set; }
-
     public virtual DbSet<ProductImage> ProductImages { get; set; }
-
     public virtual DbSet<ProductTag> ProductTags { get; set; }
-
     public virtual DbSet<Review> Reviews { get; set; }
-
     public virtual DbSet<User> Users { get; set; }
+
+    public virtual DbSet<UserCoupon> UserCoupons { get; set; }
     public virtual DbSet<Coupon> Coupons { get; set; }
+    public virtual DbSet<CouponUsage> CouponUsages { get; set; }
+
+    // TransactionGroup (mỗi checkout tạo 1 TransactionGroup gom nhiều Orders)
+    public virtual DbSet<TransactionGroup> TransactionGroups { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
- // #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=ADMIN-PC\\SQLEXPRESS2;Database=ChoBanDoCu;Trusted_Connection=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Cart config
         modelBuilder.Entity<Cart>(entity =>
         {
             entity.HasKey(e => e.CartId).HasName("PK__Cart__51BCD7B75808DB37");
@@ -62,6 +61,7 @@ public partial class ChoBanDoCuContext : DbContext
                 .HasConstraintName("FK_Cart_User");
         });
 
+        // Category config
         modelBuilder.Entity<Category>(entity =>
         {
             entity.HasKey(e => e.CategoryId).HasName("PK__Categori__19093A0BE671214B");
@@ -74,6 +74,7 @@ public partial class ChoBanDoCuContext : DbContext
                 .HasConstraintName("FK_Category_Parent");
         });
 
+        // Message config
         modelBuilder.Entity<Message>(entity =>
         {
             entity.HasKey(e => e.MessageId).HasName("PK__Messages__C87C0C9CE61ABB68");
@@ -96,13 +97,20 @@ public partial class ChoBanDoCuContext : DbContext
                 .HasConstraintName("FK_Message_Sender");
         });
 
+        // Order config (per-seller order)
         modelBuilder.Entity<Order>(entity =>
         {
             entity.HasKey(e => e.OrderId).HasName("PK__Orders__C3905BCF020F596B");
 
+            entity.ToTable("Orders");
+
             entity.Property(e => e.OrderDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+
+            entity.Property(e => e.Subtotal).HasColumnType("decimal(18, 2)").HasDefaultValue(0m);
+            entity.Property(e => e.ShippingFee).HasColumnType("decimal(18, 2)").HasDefaultValue(0m);
+            entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.PaymentDate).HasColumnType("datetime");
             entity.Property(e => e.PaymentMethod).HasMaxLength(50);
             entity.Property(e => e.PaymentStatus).HasMaxLength(50);
@@ -110,16 +118,33 @@ public partial class ChoBanDoCuContext : DbContext
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
                 .HasDefaultValue("Pending");
-            entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.DiscountAmount).HasColumnType("decimal(18, 2)").HasDefaultValue(0m);
+            entity.Property(e => e.CouponCode).HasMaxLength(50);
+            entity.Property(e => e.ReceiverName).HasMaxLength(100);
+            entity.Property(e => e.ReceiverPhone).HasMaxLength(20);
+
+            // Map TransactionGroupId as uniqueidentifier column and FK -> TransactionGroups
+            entity.Property(e => e.TransactionGroupId).HasColumnType("uniqueidentifier");
 
             entity.HasOne(d => d.User).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK_Orders_User");
+
+            entity.HasOne(d => d.Seller).WithMany()
+                .HasForeignKey(d => d.SellerId)
+                .HasConstraintName("FK_Orders_Seller");
+
+            entity.HasOne(d => d.TransactionGroup).WithMany(t => t.Orders)
+                .HasForeignKey(d => d.TransactionGroupId)
+                .HasConstraintName("FK_Orders_TransactionGroup");
         });
 
+        // OrderDetail config
         modelBuilder.Entity<OrderDetail>(entity =>
         {
             entity.HasKey(e => e.OrderDetailId).HasName("PK__OrderDet__D3B9D36CAB6E8A43");
+
+            entity.ToTable("OrderDetails");
 
             entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
 
@@ -132,6 +157,7 @@ public partial class ChoBanDoCuContext : DbContext
                 .HasConstraintName("FK_OrderDetail_Product");
         });
 
+        // Product config
         modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(e => e.ProductId).HasName("PK__Products__B40CC6CD8BE781BF");
@@ -157,6 +183,7 @@ public partial class ChoBanDoCuContext : DbContext
                 .HasConstraintName("FK_Products_Seller");
         });
 
+        // ProductImage config
         modelBuilder.Entity<ProductImage>(entity =>
         {
             entity.HasKey(e => e.ImageId).HasName("PK__ProductI__7516F70CF890C3A6");
@@ -169,6 +196,7 @@ public partial class ChoBanDoCuContext : DbContext
                 .HasConstraintName("FK_ProductImages_Product");
         });
 
+        // ProductTag config
         modelBuilder.Entity<ProductTag>(entity =>
         {
             entity.HasKey(e => e.TagId).HasName("PK__ProductT__657CF9AC381C6CA7");
@@ -180,6 +208,7 @@ public partial class ChoBanDoCuContext : DbContext
                 .HasConstraintName("FK_ProductTags_Product");
         });
 
+        // Review config
         modelBuilder.Entity<Review>(entity =>
         {
             entity.HasKey(e => e.ReviewId).HasName("PK__Reviews__74BC79CEAA161093");
@@ -198,6 +227,7 @@ public partial class ChoBanDoCuContext : DbContext
                 .HasConstraintName("FK_Reviews_User");
         });
 
+        // User config
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4C525D7EA4");
@@ -219,6 +249,73 @@ public partial class ChoBanDoCuContext : DbContext
                 .HasMaxLength(20)
                 .HasDefaultValue("User");
             entity.Property(e => e.UserName).HasMaxLength(50);
+        });
+
+        // Coupon config
+        modelBuilder.Entity<Coupon>(entity =>
+        {
+            entity.HasKey(e => e.CouponId);
+
+            entity.ToTable("Coupons");
+
+            entity.Property(e => e.Code).HasMaxLength(50);
+            entity.Property(e => e.DiscountType).HasMaxLength(20);
+            entity.Property(e => e.DiscountValue).HasColumnType("decimal(18 ,2)");
+            entity.Property(e => e.MinOrderAmount).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+
+            // Nếu coupon thuộc Seller thì liên kết
+            entity.HasOne(d => d.Seller).WithMany()
+                .HasForeignKey(d => d.SellerId)
+                .HasConstraintName("FK_Coupons_Seller");
+        });
+
+        // CouponUsage config (ghi lại mỗi lần dùng)
+        modelBuilder.Entity<CouponUsage>(entity =>
+        {
+            entity.HasKey(e => e.CouponUsageId).HasName("PK_CouponUsage");
+
+            entity.ToTable("CouponUsages");
+
+            entity.Property(e => e.AppliedAmount).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.UsedAt).HasColumnType("datetime");
+
+            // Liên kết đến Coupon
+            entity.HasOne(d => d.Coupon).WithMany(p => p.CouponUsages)
+                .HasForeignKey(d => d.CouponId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_CouponUsage_Coupon");
+
+            // Liên kết đến User
+            entity.HasOne(d => d.User).WithMany()
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_CouponUsage_User");
+
+            // Liên kết đến Order (nếu coupon áp dụng cho order cụ thể)
+            entity.HasOne(d => d.Order).WithMany()
+                .HasForeignKey(d => d.OrderId)
+                .HasConstraintName("FK_CouponUsage_Order");
+
+            // Liên kết đến TransactionGroup (nếu coupon áp dụng cho transaction / platform)
+            entity.HasOne(d => d.TransactionGroup).WithMany()
+                .HasForeignKey(d => d.TransactionGroupId)
+                .HasConstraintName("FK_CouponUsage_TransactionGroup");
+        });
+
+        // TransactionGroup config
+        modelBuilder.Entity<TransactionGroup>(entity =>
+        {
+            entity.HasKey(e => e.TransactionGroupId).HasName("PK_TransactionGroup");
+
+            entity.ToTable("TransactionGroups");
+
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.TotalAmount).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.PaymentDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.User).WithMany()
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_TransactionGroup_User");
         });
 
         OnModelCreatingPartial(modelBuilder);

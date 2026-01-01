@@ -103,7 +103,7 @@ public class AccountController : Controller
             ? model.FullName.Trim().Substring(0, 1).ToUpper() 
             : normalizedUserName.Substring(0, 1).ToUpper();
         // Tạo URL avatar dạng SVG với chữ cái (sẽ dùng data URI hoặc tạo file)
-        var avatarUrl = GenerateAvatarUrl(firstLetter);
+        var avatarUrl = $"https://ui-avatars.com/api/?name={firstLetter}&background=random&color=fff&size=150";
 
         // Tạo bản ghi User mới với mật khẩu đã hash
         var newUser = new User
@@ -158,74 +158,67 @@ public class AccountController : Controller
     public async Task<IActionResult> Profile(User model, IFormFile? avatarFile)
     {
         var userId = HttpContext.Session.GetInt32("UserId");
-        if (userId == null)
-        {
-            return RedirectToAction("Login");
-        }
+        if (userId == null) return RedirectToAction("Login");
 
         var user = await _context.Users.FindAsync(userId);
-        if (user == null)
-        {
-            return RedirectToAction("Login");
-        }
+        if (user == null) return RedirectToAction("Login");
 
-        // Cập nhật thông tin
+        // 1. Cập nhật thông tin cơ bản
         user.FullName = model.FullName;
         user.Email = model.Email;
         user.Phone = model.Phone;
         user.Address = model.Address;
 
-        // Xử lý upload avatar nếu có
+        // 2. XỬ LÝ UPLOAD ẢNH (Nếu người dùng chọn file ảnh mới)
         if (avatarFile != null && avatarFile.Length > 0)
         {
+            // Đường dẫn: wwwroot/images/avatars
             var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "avatars");
-            if (!Directory.Exists(uploadsFolder))
-            {
-                Directory.CreateDirectory(uploadsFolder);
-            }
+            if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
 
-            var fileName = $"{user.UserId}_{DateTime.UtcNow.Ticks}{Path.GetExtension(avatarFile.FileName)}";
+            // Tạo tên file an toàn (dùng Guid để không trùng)
+            var fileName = $"{user.UserId}_{Guid.NewGuid()}{Path.GetExtension(avatarFile.FileName)}";
             var filePath = Path.Combine(uploadsFolder, fileName);
+
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await avatarFile.CopyToAsync(stream);
             }
+
+            // Lưu đường dẫn ngắn gọn vào DB
             user.AvatarUrl = $"/images/avatars/{fileName}";
         }
-        // Nếu không có avatar và chưa có avatarUrl, tạo avatar chữ cái
+        // 3. NẾU KHÔNG CÓ ẢNH & CHƯA CÓ AVATAR CŨ -> Dùng link online (Thay cho hàm Base64 gây lỗi)
         else if (string.IsNullOrEmpty(user.AvatarUrl))
         {
             var firstLetter = !string.IsNullOrWhiteSpace(user.FullName) 
                 ? user.FullName.Trim().Substring(0, 1).ToUpper() 
                 : user.UserName.Substring(0, 1).ToUpper();
-            user.AvatarUrl = GenerateAvatarUrl(firstLetter);
+
+            // Dùng cái này thay cho GenerateAvatarUrl:
+            user.AvatarUrl = $"https://ui-avatars.com/api/?name={firstLetter}&background=random&color=fff&size=150";
         }
 
-        _context.Users.Update(user);
-        await _context.SaveChangesAsync();
+        // 4. Lưu Database
+        try 
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            
+            // Cập nhật lại Session Avatar để hiển thị ngay trên Header
+            HttpContext.Session.SetString("AvatarUrl", user.AvatarUrl ?? "");
+            HttpContext.Session.SetString("FullName", user.FullName ?? ""); // Cập nhật luôn tên hiển thị
+            
+            TempData["SuccessMessage"] = "Cập nhật thông tin thành công!";
+        }
+        catch (Exception ex)
+        {
+            // Bắt lỗi để không bị sập web
+            ModelState.AddModelError("", "Lỗi lưu dữ liệu: " + ex.Message);
+            return View(model);
+        }
 
-        // Cập nhật session
-        SignIn(user);
-
-        TempData["SuccessMessage"] = "Cập nhật thông tin thành công!";
         return RedirectToAction("Profile");
-    }
-
-    // Hàm tạo URL avatar từ chữ cái (dùng data URI SVG)
-    private string GenerateAvatarUrl(string letter)
-    {
-        // Tạo SVG avatar với chữ cái, màu nền ngẫu nhiên dựa trên chữ cái
-        var colors = new[] { "#0d6efd", "#198754", "#dc3545", "#ffc107", "#0dcaf0", "#6f42c1", "#fd7e14" };
-        var colorIndex = letter[0] % colors.Length;
-        var bgColor = colors[colorIndex];
-
-        var svg = $@"<svg width='100' height='100' xmlns='http://www.w3.org/2000/svg'>
-            <rect width='100' height='100' fill='{bgColor}'/>
-            <text x='50' y='50' font-size='40' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='central' font-family='Arial'>{letter}</text>
-        </svg>";
-        
-        var base64 = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(svg));
-        return $"data:image/svg+xml;base64,{base64}";
     }
 
     // HIỂN THỊ FORM ĐĂNG KÝ BÁN HÀNG (GET)
@@ -254,7 +247,7 @@ public class AccountController : Controller
         {
             // Chuyển thẳng sang trang quản lý cửa hàng hoặc đăng sản phẩm
             // Tạm thời chuyển đến trang đăng bán
-            return RedirectToAction("Create", "Product");
+            return RedirectToAction("CreateProduct", "SellerChannel");
         }
 
         // 2. Nếu là Admin
@@ -302,6 +295,15 @@ public class AccountController : Controller
         {
             // Nếu session hết hạn giữa chừng, trả về lỗi cho AJAX
             return Json(new { success = false, message = "Phiên đăng nhập đã hết hạn. Vui lòng tải lại trang và đăng nhập." });
+        }
+        // Logic: Tìm xem có ai KHÁC (UserId != currentId) đã dùng tên này chưa
+        var isDuplicateStore = await _context.Users
+            .AnyAsync(u => u.StoreName == model.StoreName && u.UserId != userId);
+
+        if (isDuplicateStore)
+        {
+            // Trả về lỗi ngay lập tức nếu trùng tên
+            return Json(new { success = false, message = $"Tên cửa hàng '{model.StoreName}' đã có người sử dụng. Vui lòng chọn tên khác!" });
         }
 
         // Kiểm tra xem người dùng có tick vào ô "đồng ý điều khoản" không
@@ -351,6 +353,7 @@ public class AccountController : Controller
         HttpContext.Session.SetInt32("UserId", user.UserId);
         HttpContext.Session.SetString("AvatarUrl", user.AvatarUrl ?? "/images/default-avatar.png");
         HttpContext.Session.SetString("Role", user.Role ?? "User");
+        HttpContext.Session.SetString("StoreName", user.StoreName ?? user.UserName);
     }
 }
 

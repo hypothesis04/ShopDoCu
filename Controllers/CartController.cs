@@ -114,4 +114,27 @@ public class CartController : Controller
 
         return RedirectToAction("Index");
     }
+
+    [HttpPost]
+    public async Task<IActionResult> AddToCartApi(int productId, int quantity)
+    {
+        var userId = HttpContext.Session.GetInt32("UserId");
+        if (userId == null) return Json(new { success = false, requireLogin = true }); // Chưa đăng nhập
+
+        // Kiểm tra hàng
+        var product = await _context.Products.FindAsync(productId);
+        if (product == null) return Json(new { success = false, message = "Lỗi sản phẩm!" });
+        if (product.SellerId == userId) return Json(new { success = false, message = "Không thể tự mua hàng của mình!" });
+
+        // Thêm/Cập nhật giỏ
+        var cartItem = await _context.Carts.FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == productId);
+        if (cartItem != null) cartItem.Quantity += quantity;
+        else _context.Carts.Add(new Cart { UserId = userId.Value, ProductId = productId, Quantity = quantity, AddedAt = DateTime.Now });
+
+        await _context.SaveChangesAsync();
+        
+        // Đếm lại số lượng để cập nhật menu
+        var count = await _context.Carts.Where(c => c.UserId == userId).SumAsync(c => c.Quantity ?? 0);
+        return Json(new { success = true, cartCount = count });
+    }
 }

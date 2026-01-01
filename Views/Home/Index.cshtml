@@ -65,17 +65,17 @@
                     <div class="carousel-inner h-100">
                         <div class="carousel-item active h-100">
                             <img src="/images/banner/banner1.jpg" class="d-block w-100 h-100" alt="Banner 1" 
-                                 style="object-fit: cover; min-height: 380px;" 
+                                 style="object-fit: contain; width: 100%; height: 380px; background-color: #e9ecef;" 
                                  onerror="this.src='https://via.placeholder.com/900x400/0d6efd/ffffff?text=Chợ+Đồ+Cũ+Công+Nghệ'" />
                         </div>
                         <div class="carousel-item h-100">
                             <img src="/images/banner/banner2.jpg" class="d-block w-100 h-100" alt="Banner 2" 
-                                 style="object-fit: cover; min-height: 380px;" 
+                                 style="object-fit: contain; width: 100%; height: 380px; background-color: #e9ecef;"
                                  onerror="this.src='https://via.placeholder.com/900x400/198754/ffffff?text=Mua+Bán+An+Toàn'" />
                         </div>
                         <div class="carousel-item h-100">
                             <img src="/images/banner/banner3.jpg" class="d-block w-100 h-100" alt="Banner 3" 
-                                 style="object-fit: cover; min-height: 380px;" 
+                                 style="object-fit: contain; width: 100%; height: 380px; background-color: #e9ecef;" 
                                  onerror="this.src='https://via.placeholder.com/900x400/0dcaf0/ffffff?text=Giá+Rẻ+Mỗi+Ngày'" />
                         </div>
                     </div>
@@ -111,8 +111,10 @@
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="card product-card h-100 border bg-white">
                         <a href="/Product/Details/@product.ProductId" class="text-decoration-none text-dark">
-                            <div class="product-image-wrapper position-relative">
-                                <img src="@imageUrl" alt="@product.ProductName" class="product-image" onerror="this.src='/images/no-image.jpg'" />
+                                       <div class="product-image-wrapper position-relative bg-white border-bottom" style="height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                        <img src="@imageUrl" alt="@product.ProductName" 
+                                            style="width: 100%; height: 100%; object-fit: contain; padding: 15px; transition: transform 0.3s ease;" 
+                                            onerror="this.src='/images/no-image.jpg'" />
                                 
                                 @if (product.IsNew == true) 
                                 { 

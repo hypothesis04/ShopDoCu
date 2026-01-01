@@ -1,0 +1,113 @@
+﻿@model IEnumerable<ShopDoCu.Models.Order>
+@{
+    ViewData["Title"] = "Quản lý đơn hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    // Lấy trạng thái hiện tại từ URL để active Tab
+    var currentStatus = Context.Request.Query["status"].ToString();
+    if (string.IsNullOrEmpty(currentStatus)) currentStatus = "All";
+}
+
+<div class="container my-4">
+    <div class="row g-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold">Quản lý đơn hàng</h4>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-2">
+                   <ul class="nav nav-pills nav-fill gap-2 p-1 bg-white border rounded-pill shadow-sm">
+                    <li class="nav-item">
+                        <a class="nav-link rounded-pill fw-bold @(currentStatus == "All" ? "active bg-primary" : "bg-light text-dark")" 
+                        href="/SellerChannel/ManageOrders?status=All">Tất cả</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link rounded-pill fw-bold @(currentStatus == "Pending" ? "active bg-warning text-dark" : "bg-light text-dark")" 
+                        href="/SellerChannel/ManageOrders?status=Pending">
+                            Chờ xác nhận
+                            @if (ViewBag.CountPending > 0) { <span class="badge bg-danger ms-1 rounded-pill">@ViewBag.CountPending</span> }
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link rounded-pill fw-bold @(currentStatus == "Shipping" ? "active bg-info text-dark" : "bg-light text-dark")" 
+                        href="/SellerChannel/ManageOrders?status=Shipping">
+                            Đang giao
+                            @if (ViewBag.CountShipping > 0) { <span class="badge bg-danger ms-1 rounded-pill">@ViewBag.CountShipping</span> }
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link rounded-pill fw-bold @(currentStatus == "Completed" ? "active bg-success" : "bg-light text-dark")" 
+                        href="/SellerChannel/ManageOrders?status=Completed">Hoàn thành</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link rounded-pill fw-bold @(currentStatus == "Cancelled" ? "active bg-danger" : "bg-light text-dark")" 
+                        href="/SellerChannel/ManageOrders?status=Cancelled">Đã hủy</a>
+                    </li>
+                </ul>
+                      
+                    </ul>
+                </div>
+            </div>
+
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+                    <img src="https://cdn-icons-png.flaticon.com/512/4076/4076432.png" width="80" class="opacity-50 mb-3" />
+                    <p class="text-muted">Không tìm thấy đơn hàng nào ở mục này.</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var order in Model)
+                {
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-header bg-white py-3 border-bottom-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="fw-bold me-2">#@order.OrderId</span>
+                                    <span class="text-muted small">@order.OrderDate?.ToString("dd/MM/yyyy HH:mm")</span>
+                                    <span class="mx-2 text-muted">|</span>
+                                    <span class="text-muted small">Khách: <strong>@order.User?.FullName</strong></span>
+                                </div>
+                                <div>
+                                    @if (order.Status == "Pending") { <span class="badge bg-warning text-dark">CHỜ DUYỆT</span> }
+                                    else if (order.Status == "Shipping") { <span class="badge bg-info text-dark">ĐANG GIAO</span> }
+                                    else if (order.Status == "Completed") { <span class="badge bg-success">HOÀN THÀNH</span> }
+                                    else if (order.Status == "Cancelled") { <span class="badge bg-danger">ĐÃ HỦY</span> }
+                                    else if (order.Status == "Returned") { <span class="badge bg-secondary">ĐÃ TRẢ HÀNG</span> }
+                                    else if (order.Status == "ReturnRequested") { <span class="badge bg-orange text-white" style="background-color: #fd7e14;">YÊU CẦU TRẢ</span> }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body bg-light bg-opacity-25">
+                            @foreach (var detail in order.OrderDetails)
+                            {
+                                var imgUrl = detail.Product?.ProductImages?.FirstOrDefault()?.ImageUrl ?? "https://placehold.co/50";
+                                <div class="d-flex align-items-center mb-2">
+                                    <img src="@imgUrl" class="rounded border" style="width: 50px; height: 50px; object-fit: cover;">
+                                    <div class="ms-3 flex-grow-1">
+                                        <h6 class="mb-0 small">@detail.Product?.ProductName</h6>
+                                        <small class="text-muted">x @detail.Quantity</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="text-dark small">@detail.UnitPrice?.ToString("N0")₫</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="card-footer bg-white py-3 border-top-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="text-muted small">
+                                    Tổng tiền: <span class="text-danger fw-bold fs-5 ms-1">@order.TotalAmount?.ToString("N0")₫</span>
+                                </div>
+                                <div>
+                                    <a href="/SellerChannel/OrderDetails/@order.OrderId" class="btn btn-primary btn-sm px-4 rounded-pill">
+                                        Xem chi tiết & Xử lý
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+</div>

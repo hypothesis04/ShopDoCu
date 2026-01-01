@@ -108,14 +108,37 @@ public class ProductController : Controller
         product.Views = (product.Views ?? 0) + 1;
         await _context.SaveChangesAsync();
 
-        var relatedProducts = await _context.Products
-        .Include(p => p.ProductImages)
-        .Where(p => p.CategoryId == product.CategoryId && p.ProductId != id && p.Quantity > 0)
-        .OrderByDescending(p => p.CreatedAt) // Lấy mới nhất
-        .Take(4)
-        .ToListAsync();
+        // 2. LOGIC LẤY SẢN PHẨM LIÊN QUAN (Tối đa 4)
+        // Bước A: Lấy cùng danh mục con (CategoryId hiện tại)
 
-        // Truyền sang View
+        var relatedProducts = await _context.Products
+            .Include(p => p.ProductImages)
+            .Where(p => p.CategoryId == product.CategoryId && p.ProductId != id && p.Quantity > 0 && p.Status == "Active")
+            .OrderByDescending(p => p.CreatedAt)
+            .Take(4)
+            .ToListAsync();
+
+        // Bước B: Nếu chưa đủ 4, lấy thêm từ danh mục cha (ParentId)
+        if (relatedProducts.Count < 4 && product.Category?.ParentId != null)
+        {
+            int limitNeeded = 4 - relatedProducts.Count;
+            var currentRelatedIds = relatedProducts.Select(p => p.ProductId).ToList();
+            currentRelatedIds.Add(id); // Loại trừ sản phẩm hiện tại
+
+            var fromParentCategory = await _context.Products
+                .Include(p => p.ProductImages)
+                .Include(p => p.Category)
+                .Where(p => p.Category.ParentId == product.Category.ParentId
+                            && !currentRelatedIds.Contains(p.ProductId)
+                            && p.Quantity > 0
+                            && p.Status == "Active")
+                .OrderByDescending(p => p.CreatedAt)
+                .Take(limitNeeded)
+                .ToListAsync();
+
+            relatedProducts.AddRange(fromParentCategory);
+        }
+
         ViewBag.RelatedProducts = relatedProducts;
         // --- 4. LOGIC MỚI: KIỂM TRA QUYỀN ĐÁNH GIÁ ---
         bool canReview = false;
